@@ -1,26 +1,6 @@
 <!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Now Playing Widget</title>
-  <style>
-    *{box-sizing:border-box}html,body{margin:0;min-height:100%;font-family:Inter,system-ui,sans-serif;background:transparent;color:var(--text-color,#30343b)}body{padding:10px}.widget{display:flex;align-items:center;gap:14px;width:max-content;max-width:100%;min-height:90px;padding:4px;background:transparent}.cover{position:relative;width:80px;height:80px;flex:0 0 auto;overflow:hidden;border-radius:var(--radius,8px)}.cover img{display:block;width:100%;height:100%;object-fit:cover}.map{position:absolute;inset:0;background:linear-gradient(135deg,var(--shadow),var(--mid) 50%,var(--highlight));opacity:var(--strength,.62);mix-blend-mode:color}.details{min-width:0;max-width:460px}.artist,.song{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.artist{margin:0 0 3px;font-size:16px;font-weight:600}.song{margin:0;font-size:14px;font-weight:500}.wave{display:block;width:min(280px,100%);height:16px;margin-top:5px}.wave path{fill:none;stroke:var(--wave);stroke-width:2.5;stroke-linecap:round}
-  </style>
-</head>
-<body>
-  <div class="widget">
-    <div class="cover" id="cover"><img id="art" alt="Album cover" /><div class="map" id="map"></div></div>
-    <div class="details"><p class="artist" id="artist"></p><p class="song" id="song"></p><svg class="wave" id="wave" viewBox="0 0 280 18" preserveAspectRatio="none"><path d="M0 9 C10 9 10 2 20 2 S30 16 40 16 50 5 60 5 70 13 80 13 90 2 100 2 110 16 120 16 130 5 140 5 150 13 160 13 170 2 180 2 190 16 200 16 210 5 220 5 230 13 240 13 250 2 260 2 270 16 280 9" /></svg></div>
-  </div>
-  <script>
-    const q=new URLSearchParams(location.search);
-    const get=(k,d)=>q.get(k)||d;
-    const root=document.documentElement;
-    const vals={shadow:get('shadow','#172b46'),mid:get('midtone','#8167a8'),highlight:get('highlight','#ffd6a0'),strength:Number(get('strength','62'))/100,radius:Number(get('radius','12')),text:get('textColor','#30343b'),wave:get('waveColor','#8c62c7')};
-    root.style.setProperty('--shadow',vals.shadow);root.style.setProperty('--mid',vals.mid);root.style.setProperty('--highlight',vals.highlight);root.style.setProperty('--strength',vals.strength);root.style.setProperty('--radius',`${vals.radius}px`);root.style.setProperty('--text-color',vals.text);root.style.setProperty('--wave',vals.wave);
-    document.getElementById('artist').textContent=get('artist','M83');document.getElementById('song').textContent=get('title','Midnight City');document.getElementById('art').src=get('art','https://images.unsplash.com/photo-1516280440614-37939bbacd81?auto=format&fit=crop&w=900&q=80');
-    if(get('showGradient','true')==='false')document.getElementById('map').style.display='none';if(get('showWave','true')==='false')document.getElementById('wave').style.display='none';
-  </script>
-</body>
-</html>
+<html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Now Playing Preview</title><style>
+*{box-sizing:border-box}html,body{margin:0;min-height:100%;font-family:Roboto,Arial,sans-serif;background:transparent;color:#444}body{padding:5px}.widget{display:flex;align-items:center;justify-content:center;gap:12px;min-height:90px;padding:4px;background:transparent}.cover-wrap{position:relative;width:80px;height:80px;flex:0 0 auto;overflow:hidden;border:3px solid var(--bar,#53b14f);border-radius:4px}.cover-wrap img{display:block;width:100%;height:100%;object-fit:cover}.map{position:absolute;inset:0;background:linear-gradient(135deg,var(--shadow,#172b46),var(--mid,#8167a8) 50%,var(--highlight,#ffd6a0));opacity:var(--strength,.55);mix-blend-mode:color;pointer-events:none}.details{width:min(330px,calc(100vw - 110px));min-width:0;text-align:center}.artist,.song{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.artist{margin:0 0 3px;color:#444;font-size:17px;font-weight:600}.song{margin:0;color:#999;font-size:15px}.wave{width:100%;height:15px;margin-top:4px}.wave path{fill:none;stroke:var(--bar,#53b14f);stroke-width:2.4;stroke-linecap:round}
+</style></head><body><div class="widget" id="widget"><div class="cover-wrap" id="cover-wrap"><img id="cover" alt="Album cover"><div class="map" id="map"></div></div><div class="details"><p class="artist" id="artist"></p><p class="song" id="song"></p><svg class="wave" id="wave" viewBox="0 0 360 24" preserveAspectRatio="none"><path d="M0 12 C12 12 12 3 24 3 S36 21 48 21 60 7 72 7 84 17 96 17 108 3 120 3 132 21 144 21 156 8 168 8 180 16 192 16 204 4 216 4 228 20 240 20 252 7 264 7 276 17 288 17 300 3 312 3 324 21 336 21 348 12 360 12"/></svg></div></div><script>
+const q=new URLSearchParams(location.search),g=(k,d)=>q.get(k)||d;const root=document.documentElement;root.style.setProperty('--bar',g('bar','#53b14f'));root.style.setProperty('--shadow',g('shadow','#172b46'));root.style.setProperty('--mid',g('mid','#8167a8'));root.style.setProperty('--highlight',g('highlight','#ffd6a0'));root.style.setProperty('--strength',`${Number(g('strength','55'))/100}`);document.body.style.background=g('bg','#ffffff');document.getElementById('artist').textContent=g('artist','M83');document.getElementById('song').textContent=g('title','Midnight City');document.getElementById('cover').src=g('art','https://images.unsplash.com/photo-1516280440614-37939bbacd81?auto=format&fit=crop&w=600&q=80');if(g('cover','true')==='false')document.getElementById('cover-wrap').style.display='none';if(g('wave','true')==='false')document.getElementById('wave').style.display='none';if(g('gradient','true')==='false')document.getElementById('map').style.display='none';if(g('interchange','false')==='true'){const a=document.getElementById('artist'),s=document.getElementById('song'),v=a.textContent;a.textContent=s.textContent;s.textContent=v;}
+</script></body></html>

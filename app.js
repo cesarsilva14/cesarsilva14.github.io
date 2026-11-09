@@ -1,227 +1,49 @@
-const STORAGE_KEY = 'widget-studio-state-v2';
-const TOKEN_KEY = 'spotify-widget-tokens';
-const STATE_KEY = 'spotify-oauth-state';
-const VERIFIER_KEY = 'spotify-pkce-verifier';
 const CLIENT_ID = '940beb9b7c414631957560ead892d125';
 const REDIRECT_URI = 'https://khomedy.github.io/callback.html';
 const SCOPES = 'user-read-currently-playing';
-const POLL_INTERVAL_MS = 20000;
-
-const defaults = {
-  title: 'Midnight City', artist: 'M83',
-  art: 'https://images.unsplash.com/photo-1516280440614-37939bbacd81?auto=format&fit=crop&w=900&q=80',
-  shadow: '#172b46', midtone: '#8167a8', highlight: '#ffd6a0', strength: 62,
-  radius: 12, textColor: '#30343b', waveColor: '#8c62c7', showWave: true, showGradient: true,
-};
+const TOKEN_KEY = 'spotify-widget-tokens-v2';
+const VERIFIER_KEY = 'spotify-widget-verifier';
+const STATE_KEY = 'spotify-widget-state';
+const SETTINGS_KEY = 'spotify-widget-settings-v2';
+const POLL_MS = 20000;
 const $ = (id) => document.getElementById(id);
-const fields = {
-  title: $('title-input'), artist: $('artist-input'), art: $('art-input'),
-  shadow: $('stop-0'), midtone: $('stop-1'), highlight: $('stop-2'), strength: $('strength-input'),
-  radius: $('radius-input'), textColor: $('text-color-input'), waveColor: $('wave-color-input'),
-  showWave: $('show-wave'), showGradient: $('show-gradient'),
-};
-let liveTrack = false;
-let pollTimer;
-
-function readState() {
-  try { return { ...defaults, ...JSON.parse(localStorage.getItem(STORAGE_KEY) || '{}') }; }
-  catch { return { ...defaults }; }
+const controls = ['cover-enabled','open-spotify','show-offline','interchange','censor','hide-remaster','show-wave','theme','bar-color','background-color','automatic-color','gradient-enabled','shadow-color','mid-color','highlight-color','gradient-strength'];
+let activeCodeFormat = 'markdown';
+let pollHandle;
+const defaultSettings = {coverEnabled:true,openSpotify:false,showOffline:false,interchange:false,censor:false,hideRemaster:false,showWave:true,theme:'minimal',barColor:'#53b14f',backgroundColor:'#ffffff',automaticColor:false,gradientEnabled:true,shadow:'#172b46',mid:'#8167a8',highlight:'#ffd6a0',strength:55,artist:'M83',title:'Midnight City',art:'https://images.unsplash.com/photo-1516280440614-37939bbacd81?auto=format&fit=crop&w=600&q=80'};
+function readSettings(){try{return {...defaultSettings,...JSON.parse(localStorage.getItem(SETTINGS_KEY)||'{}')}}catch{return {...defaultSettings}}}
+function fromControls(){return {coverEnabled:$('cover-enabled').checked,openSpotify:$('open-spotify').checked,showOffline:$('show-offline').checked,interchange:$('interchange').checked,censor:$('censor').checked,hideRemaster:$('hide-remaster').checked,showWave:$('show-wave').checked,theme:$('theme').value,barColor:$('bar-color').value,backgroundColor:$('background-color').value,automaticColor:$('automatic-color').checked,gradientEnabled:$('gradient-enabled').checked,shadow:$('shadow-color').value,mid:$('mid-color').value,highlight:$('highlight-color').value,strength:Number($('gradient-strength').value),artist:$('preview-artist').textContent,title:$('preview-song').textContent,art:$('preview-art').src};}
+function render(settings=readSettings()){
+  $('preview-art').style.display=settings.coverEnabled?'block':'none';
+  $('preview-wave').style.display=settings.showWave?'block':'none';
+  $('widget-preview').style.background=settings.backgroundColor;
+  $('widget-preview').style.setProperty('--bar-color',settings.barColor);
+  $('widget-preview').style.setProperty('--shadow',settings.shadow);
+  $('widget-preview').style.setProperty('--mid',settings.mid);
+  $('widget-preview').style.setProperty('--highlight',settings.highlight);
+  $('widget-preview').style.setProperty('--map-strength',settings.gradientEnabled?settings.strength/100:0);
+  $('preview-art').style.filter=settings.gradientEnabled?'none':'none';
+  $('preview-art').style.setProperty('--gradient-on',settings.gradientEnabled?'1':'0');
+  $('gradient-ramp').style.background=`linear-gradient(90deg,${settings.shadow},${settings.mid} 50%,${settings.highlight})`;
+  $('strength-output').value=`${settings.strength}%`;
+  if(settings.interchange){$('preview-artist').textContent=settings.title;$('preview-song').textContent=settings.artist;}
+  updateCode(settings);
 }
-function stateFromInputs() {
-  return {
-    title: fields.title.value, artist: fields.artist.value, art: fields.art.value,
-    shadow: fields.shadow.value, midtone: fields.midtone.value, highlight: fields.highlight.value,
-    strength: Number(fields.strength.value), radius: Number(fields.radius.value),
-    textColor: fields.textColor.value, waveColor: fields.waveColor.value,
-    showWave: fields.showWave.checked, showGradient: fields.showGradient.checked,
-  };
-}
-function saveAndRender() {
-  const state = stateFromInputs();
-  localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
-  render(state);
-}
-function render(state = readState()) {
-  $('preview-artist').textContent = state.artist || 'Artist';
-  $('preview-song').textContent = state.title || 'Song title';
-  $('preview-art').src = state.art || defaults.art;
-  $('preview-art').style.borderRadius = `${state.radius}px`;
-  $('widget-preview').style.setProperty('--text-color', state.textColor);
-  $('widget-preview').style.setProperty('--wave-color', state.waveColor);
-  $('widget-preview').style.setProperty('--cover-radius', `${state.radius}px`);
-  $('widget-preview').style.setProperty('--map-strength', String(state.strength / 100));
-  $('widget-preview').style.setProperty('--shadow-color', state.shadow);
-  $('widget-preview').style.setProperty('--midtone-color', state.midtone);
-  $('widget-preview').style.setProperty('--highlight-color', state.highlight);
-  $('widget-preview').classList.toggle('no-gradient', !state.showGradient);
-  $('wave-line').classList.toggle('hidden', !state.showWave);
-  $('strength-value').value = `${state.strength}%`;
-  $('radius-value').value = `${state.radius} px`;
-  updateRamp(state);
-}
-function updateRamp(state = stateFromInputs()) {
-  const ramp = $('gradient-ramp');
-  ramp.style.background = `linear-gradient(90deg, ${state.shadow}, ${state.midtone} 50%, ${state.highlight})`;
-}
-function setInputs(state) {
-  for (const [key, field] of Object.entries(fields)) {
-    if (field.type === 'checkbox') field.checked = Boolean(state[key]);
-    else field.value = String(state[key]);
-  }
-  render(state);
-}
-
-async function startSpotifyConnect() {
-  try {
-    const verifierBytes = crypto.getRandomValues(new Uint8Array(64));
-    const verifier = Array.from(verifierBytes, (b) => b.toString(16).padStart(2, '0')).join('');
-    const hash = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(verifier));
-    const challenge = btoa(String.fromCharCode(...new Uint8Array(hash))).replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/g, '');
-    const stateBytes = crypto.getRandomValues(new Uint8Array(24));
-    const state = Array.from(stateBytes, (b) => b.toString(16).padStart(2, '0')).join('');
-    sessionStorage.setItem(VERIFIER_KEY, verifier);
-    sessionStorage.setItem(STATE_KEY, state);
-    const params = new URLSearchParams({ client_id: CLIENT_ID, response_type: 'code', redirect_uri: REDIRECT_URI, scope: SCOPES, state, code_challenge_method: 'S256', code_challenge: challenge });
-    window.location.assign(`https://accounts.spotify.com/authorize?${params.toString()}`);
-  } catch (error) {
-    $('status-message').textContent = `Could not start Spotify sign-in: ${error.message}`;
-  }
-}
-
-async function processCallback() {
-  const params = new URLSearchParams(location.search);
-  const code = params.get('code');
-  const returnedState = params.get('state');
-  const expectedState = sessionStorage.getItem(STATE_KEY);
-  const verifier = sessionStorage.getItem(VERIFIER_KEY);
-  if (params.has('error')) {
-    $('status-message').textContent = `Spotify sign-in was cancelled: ${params.get('error')}.`;
-    cleanCallbackUrl();
-    return;
-  }
-  if (!code || !returnedState || returnedState !== expectedState || !verifier) {
-    $('status-message').textContent = 'Could not verify the Spotify sign-in. Please connect again.';
-    cleanCallbackUrl();
-    return;
-  }
-  $('status-message').textContent = 'Finishing Spotify sign-in…';
-  try {
-    const response = await fetch('https://accounts.spotify.com/api/token', {
-      method: 'POST', headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-      body: new URLSearchParams({ client_id: CLIENT_ID, grant_type: 'authorization_code', code, redirect_uri: REDIRECT_URI, code_verifier: verifier }),
-    });
-    const token = await response.json();
-    if (!response.ok) throw new Error(token.error_description || `Token exchange failed (${response.status}).`);
-    storeTokens(token);
-    sessionStorage.removeItem(STATE_KEY);
-    sessionStorage.removeItem(VERIFIER_KEY);
-    cleanCallbackUrl();
-    markConnected(true);
-    await refreshTrack(true);
-    startPolling();
-  } catch (error) {
-    cleanCallbackUrl();
-    $('status-message').textContent = `Sign-in did not finish: ${error.message}`;
-  }
-}
-function cleanCallbackUrl() { history.replaceState({}, document.title, location.pathname); }
-function storeTokens(data, old = {}) {
-  localStorage.setItem(TOKEN_KEY, JSON.stringify({ accessToken: data.access_token, refreshToken: data.refresh_token || old.refreshToken, expiresAt: Date.now() + (data.expires_in || 3600) * 1000 }));
-}
-function getTokens() { try { return JSON.parse(localStorage.getItem(TOKEN_KEY) || 'null'); } catch { return null; } }
-async function accessToken() {
-  let tokens = getTokens();
-  if (!tokens) return null;
-  if (Date.now() < tokens.expiresAt - 30000) return tokens.accessToken;
-  if (!tokens.refreshToken) { localStorage.removeItem(TOKEN_KEY); markConnected(false); return null; }
-  const response = await fetch('https://accounts.spotify.com/api/token', { method: 'POST', headers: { 'Content-Type': 'application/x-www-form-urlencoded' }, body: new URLSearchParams({ client_id: CLIENT_ID, grant_type: 'refresh_token', refresh_token: tokens.refreshToken }) });
-  const data = await response.json();
-  if (!response.ok) throw new Error(data.error_description || `Could not refresh Spotify session (${response.status}).`);
-  storeTokens(data, tokens);
-  tokens = getTokens();
-  return tokens.accessToken;
-}
-function markConnected(connected) {
-  $('connection-status').textContent = connected ? '✓ Signed in to Spotify' : 'Not connected';
-  $('connection-status').classList.toggle('connected', connected);
-  $('spotify-connect').classList.toggle('hidden', connected);
-  $('spotify-disconnect').classList.toggle('hidden', !connected);
-}
-async function refreshTrack(initial = false) {
-  try {
-    const token = await accessToken();
-    if (!token) {
-      markConnected(false);
-      if (initial) $('status-message').textContent = 'Connect Spotify to load the track you’re playing.';
-      return;
-    }
-    markConnected(true);
-    const response = await fetch('https://api.spotify.com/v1/me/player/currently-playing', { headers: { Authorization: `Bearer ${token}` } });
-    if (response.status === 204) {
-      $('status-message').textContent = 'Signed in to Spotify, but Spotify reports no current track. Play something and the preview will update.';
-      $('track-updated').textContent = 'Waiting for playback';
-      return;
-    }
-    if (!response.ok) {
-      $('status-message').textContent = response.status === 403
-        ? 'Signed in to Spotify, but the API denied access to current playback (403). Your account is connected; check Spotify app access/permissions.'
-        : `Signed in, but Spotify returned HTTP ${response.status} while loading playback.`;
-      return;
-    }
-    const data = await response.json();
-    if (!data.item) return;
-    const track = data.item;
-    liveTrack = true;
-    fields.title.value = track.name || '';
-    fields.artist.value = track.artists?.map((artist) => artist.name).join(', ') || '';
-    fields.art.value = track.album?.images?.[0]?.url || defaults.art;
-    saveAndRender();
-    $('track-updated').textContent = 'Live from Spotify';
-    $('status-message').textContent = '✓ Signed in. Preview is showing the track currently playing on your Spotify account.';
-  } catch (error) {
-    $('status-message').textContent = `Spotify connection issue: ${error.message}`;
-  }
-}
-function startPolling() {
-  clearInterval(pollTimer);
-  pollTimer = setInterval(() => refreshTrack(false), POLL_INTERVAL_MS);
-}
-function disconnectSpotify() {
-  localStorage.removeItem(TOKEN_KEY);
-  clearInterval(pollTimer);
-  liveTrack = false;
-  markConnected(false);
-  $('track-updated').textContent = 'Preview sample';
-  $('status-message').textContent = 'Disconnected from Spotify. You can still customize the widget.';
-}
-function previewUrl() {
-  const params = new URLSearchParams();
-  for (const [key, value] of Object.entries(stateFromInputs())) params.set(key, String(value));
-  return `${location.origin}/preview.html?${params.toString()}`;
-}
-async function copyPreviewLink() {
-  const url = previewUrl();
-  try { await navigator.clipboard.writeText(url); $('copy-status').textContent = 'Preview link copied.'; }
-  catch { $('copy-status').textContent = `Copy this preview link: ${url}`; }
-}
-
-for (const field of Object.values(fields)) {
-  field.addEventListener('input', saveAndRender);
-  field.addEventListener('change', saveAndRender);
-}
-$('spotify-connect').addEventListener('click', startSpotifyConnect);
-$('spotify-disconnect').addEventListener('click', disconnectSpotify);
-$('copy-link').addEventListener('click', copyPreviewLink);
-
-setInputs(readState());
-if (new URLSearchParams(location.search).has('code') || new URLSearchParams(location.search).has('error')) {
-  processCallback();
-} else if (getTokens()) {
-  markConnected(true);
-  $('status-message').textContent = '✓ Signed in to Spotify. Checking what’s playing…';
-  refreshTrack(true);
-  startPolling();
-} else {
-  markConnected(false);
-  $('status-message').textContent = 'Connect Spotify to load the track you’re playing.';
-}
+function save(){const s=fromControls();localStorage.setItem(SETTINGS_KEY,JSON.stringify(s));render(s);}
+function loadControls(){const s=readSettings();const map={'cover-enabled':'coverEnabled','open-spotify':'openSpotify','show-offline':'showOffline','interchange':'interchange','censor':'censor','hide-remaster':'hideRemaster','show-wave':'showWave','theme':'theme','bar-color':'barColor','background-color':'backgroundColor','automatic-color':'automaticColor','gradient-enabled':'gradientEnabled','shadow-color':'shadow','mid-color':'mid','highlight-color':'highlight','gradient-strength':'strength'};for(const [id,key] of Object.entries(map)){const c=$(id);if(c.type==='checkbox')c.checked=Boolean(s[key]);else c.value=String(s[key]);} $('preview-artist').textContent=s.artist;$('preview-song').textContent=s.title;$('preview-art').src=s.art;render(s);}
+function previewUrl(s){const p=new URLSearchParams({artist:s.artist,title:s.title,art:s.art,cover:String(s.coverEnabled),openSpotify:String(s.openSpotify),offline:String(s.showOffline),interchange:String(s.interchange),censor:String(s.censor),hideRemaster:String(s.hideRemaster),wave:String(s.showWave),theme:s.theme,bar:s.barColor,bg:s.backgroundColor,auto:String(s.automaticColor),gradient:String(s.gradientEnabled),shadow:s.shadow,mid:s.mid,highlight:s.highlight,strength:String(s.strength)});return `https://khomedy.github.io/preview.html?${p}`;}
+function updateCode(s=fromControls()){const url=previewUrl(s);const safe=url.replaceAll('&','&amp;').replaceAll('"','&quot;');const md=`[Now Playing — ${s.artist} · ${s.title}](${url})`;const html=`<a href="${safe}">Now Playing — ${escapeHtml(s.artist)} · ${escapeHtml(s.title)}</a>`;$('code-output').value=activeCodeFormat==='markdown'?md:html;}
+function escapeHtml(text){return String(text).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));}
+async function copyCode(){try{await navigator.clipboard.writeText($('code-output').value);$('copy-code').textContent='✓ Copied';setTimeout(()=>$('copy-code').textContent='▢  Copy to clipboard',1500);}catch{$('code-output').select();$('status-message').textContent='Select and copy the code above.';}}
+function setFormat(format){activeCodeFormat=format;for(const f of ['markdown','html']){$(`${f}-tab`).classList.toggle('active',f===format);$(`${f}-tab`).setAttribute('aria-selected',String(f===format));}updateCode();}
+function randomVerifier(){const a=crypto.getRandomValues(new Uint8Array(64));return [...a].map(x=>x.toString(16).padStart(2,'0')).join('');}
+async function connectSpotify(){try{const verifier=randomVerifier();const digest=await crypto.subtle.digest('SHA-256',new TextEncoder().encode(verifier));const challenge=btoa(String.fromCharCode(...new Uint8Array(digest))).replace(/\+/g,'-').replace(/\//g,'_').replace(/=+$/g,'');const state=randomVerifier().slice(0,32);sessionStorage.setItem(VERIFIER_KEY,verifier);sessionStorage.setItem(STATE_KEY,state);const q=new URLSearchParams({client_id:CLIENT_ID,response_type:'code',redirect_uri:REDIRECT_URI,scope:SCOPES,state,code_challenge_method:'S256',code_challenge:challenge});location.assign(`https://accounts.spotify.com/authorize?${q}`);}catch(e){$('status-message').textContent=`Could not start Spotify sign-in: ${e.message}`;}}
+function getTokens(){try{return JSON.parse(localStorage.getItem(TOKEN_KEY)||'null')}catch{return null}}
+function setTokens(data,old={}){localStorage.setItem(TOKEN_KEY,JSON.stringify({access:data.access_token,refresh:data.refresh_token||old.refresh,expires:Date.now()+data.expires_in*1000}));}
+function setSignedIn(ok){$('connection-status').textContent=ok?'✓ Signed in to Spotify':'Not signed in';$('connection-status').classList.toggle('signed-in',ok);$('spotify-connect').classList.toggle('hidden',ok);$('spotify-disconnect').classList.toggle('hidden',!ok);}
+async function token(){let t=getTokens();if(!t)return null;if(Date.now()<t.expires-30000)return t.access;if(!t.refresh){localStorage.removeItem(TOKEN_KEY);setSignedIn(false);return null;}const r=await fetch('https://accounts.spotify.com/api/token',{method:'POST',headers:{'Content-Type':'application/x-www-form-urlencoded'},body:new URLSearchParams({client_id:CLIENT_ID,grant_type:'refresh_token',refresh_token:t.refresh})});const d=await r.json();if(!r.ok)throw Error(d.error_description||`Token refresh HTTP ${r.status}`);setTokens(d,t);return getTokens().access;}
+async function pollTrack(){try{const access=await token();if(!access){setSignedIn(false);return;}setSignedIn(true);const r=await fetch('https://api.spotify.com/v1/me/player/currently-playing',{headers:{Authorization:`Bearer ${access}`}});if(r.status===204){$('status-message').textContent='Signed in to Spotify. No current track was returned; the editor remains available.';return;}if(!r.ok){$('status-message').textContent=r.status===403?'Signed in to Spotify, but Spotify denied access to playback data (HTTP 403). Your design is saved.':`Signed in, but Spotify returned HTTP ${r.status}.`;return;}const d=await r.json();if(!d.item){$('status-message').textContent='Signed in, but no current track was returned.';return;}const t=d.item;const s=readSettings();s.artist=t.artists?.map(a=>a.name).join(', ')||'Unknown artist';s.title=t.name||'Unknown track';s.art=t.album?.images?.[0]?.url||s.art;if(s.hideRemaster)s.title=s.title.replace(/\s*[-–(]\s*\d{4}\s+Remaster[^)]*\)?/ig,'').trim();if(s.censor)s.title=s.title.replace(/\b(fuck|shit|bitch|damn)\b/ig,'••••');$('preview-artist').textContent=s.artist;$('preview-song').textContent=s.title;$('preview-art').src=s.art;localStorage.setItem(SETTINGS_KEY,JSON.stringify({...s,artist:t.artists?.map(a=>a.name).join(', ')||'Unknown artist',title:t.name||'Unknown track',art:s.art}));render({...s,artist:t.artists?.map(a=>a.name).join(', ')||'Unknown artist',title:t.name||'Unknown track',art:s.art});$('status-message').textContent='✓ Signed in. Showing the track currently playing on your Spotify account.';}catch(e){$('status-message').textContent=`Spotify status: ${e.message}`;}}
+async function handleCallback(){const q=new URLSearchParams(location.search);const code=q.get('code');const state=q.get('state');if(q.has('error')){$('status-message').textContent=`Spotify sign-in canceled: ${q.get('error')}`;history.replaceState({},document.title,location.pathname);return;}const verifier=sessionStorage.getItem(VERIFIER_KEY);if(!code||!state||state!==sessionStorage.getItem(STATE_KEY)||!verifier){$('status-message').textContent='Could not verify sign-in. Please connect Spotify again.';history.replaceState({},document.title,location.pathname);return;}try{$('status-message').textContent='Finishing Spotify sign-in…';const r=await fetch('https://accounts.spotify.com/api/token',{method:'POST',headers:{'Content-Type':'application/x-www-form-urlencoded'},body:new URLSearchParams({client_id:CLIENT_ID,grant_type:'authorization_code',code,redirect_uri:REDIRECT_URI,code_verifier:verifier})});const d=await r.json();if(!r.ok)throw Error(d.error_description||`Token exchange HTTP ${r.status}`);setTokens(d);sessionStorage.removeItem(STATE_KEY);sessionStorage.removeItem(VERIFIER_KEY);history.replaceState({},document.title,location.pathname);setSignedIn(true);await pollTrack();clearInterval(pollHandle);pollHandle=setInterval(pollTrack,20000);}catch(e){$('status-message').textContent=`Sign-in did not complete: ${e.message}`;history.replaceState({},document.title,location.pathname);}}
+function disconnect(){localStorage.removeItem(TOKEN_KEY);clearInterval(pollHandle);setSignedIn(false);$('status-message').textContent='Disconnected. You can still build your widget.';}
+for(const id of controls){$(id).addEventListener('input',save);$(id).addEventListener('change',save);} $('copy-code').addEventListener('click',copyCode);$('markdown-tab').addEventListener('click',()=>setFormat('markdown'));$('html-tab').addEventListener('click',()=>setFormat('html'));$('spotify-connect').addEventListener('click',connectSpotify);$('spotify-disconnect').addEventListener('click',disconnect);
+loadControls();const callback=new URLSearchParams(location.search);if(callback.has('code')||callback.has('error'))handleCallback();else if(getTokens()){setSignedIn(true);$('status-message').textContent='Signed in to Spotify. Checking current playback…';pollTrack();pollHandle=setInterval(pollTrack,POLL_MS);}else setSignedIn(false);
