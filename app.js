@@ -70,7 +70,7 @@ function refresh() {
   image.removeAttribute('src');
   if (!s.uid) {
     $('connection-status').textContent = 'Not connected';
-    $('status-message').textContent = 'Connect Spotify in the widget service, then paste the UID it provides here.';
+    $('status-message').textContent = 'Click Connect Spotify. On the authorization page, copy the UID it displays, return here, and paste it into Widget UID.';
     $('code-output').value = '';
     return;
   }
@@ -87,8 +87,9 @@ function refresh() {
 }
 
 function connect() {
-  window.open(CONNECT_URL, '_blank', 'noopener,noreferrer');
-  $('status-message').textContent = 'Complete Spotify authorization in the new tab, then paste the UID shown there into the Widget UID field.';
+  // Use same-tab navigation: popup blockers can silently prevent window.open,
+  // while the service's login endpoint performs the OAuth redirect itself.
+  window.location.assign(CONNECT_URL);
 }
 
 async function copyCode() {
