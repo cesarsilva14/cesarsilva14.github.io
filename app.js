@@ -1,44 +1,132 @@
-const CLIENT_ID = '940beb9b7c414631957560ead892d125';
-const REDIRECT_URI = 'https://khomedy.github.io/callback.html';
-const SCOPE = 'user-read-currently-playing user-read-recently-played';
-const SETTINGS_KEY = 'novatorem-widget-settings-v2';
-const TOKEN_KEY = 'novatorem-spotify-tokens-v2';
-const STATE_KEY = 'novatorem-oauth-state-v2';
-const VERIFIER_KEY = 'novatorem-pkce-verifier-v2';
-const POLL_INTERVAL = 20000;
+const API_BASE = 'https://spotify-github-profile.kittinanx.com/api/view';
 const $ = (id) => document.getElementById(id);
-const settingIds = ['cover-enabled','open-spotify','show-offline','interchange','censor','hide-remaster','show-wave','bar-color','background-color','automatic-color','gradient-enabled','shadow-color','mid-color','highlight-color','gradient-strength'];
-const defaults = {cover:true,openSpotify:false,offline:true,interchange:false,censor:false,hideRemaster:false,wave:true,bar:'#53b14f',background:'#ffffff',automatic:false,gradient:true,shadow:'#172b46',mid:'#8167a8',highlight:'#ffd6a0',strength:100};
+const settingIds = ['cover-image', 'open-spotify', 'show-offline', 'interchange', 'profanity', 'hide-remaster', 'bar-color-cover'];
+const STORAGE_KEY = 'novatorem-generator-settings';
 let codeFormat = 'markdown';
-let pollTimer = null;
-let track = null;
-let gradientRenderId = 0;
+let loadTimer;
 
-function loadSettings(){try{return {...defaults,...JSON.parse(localStorage.getItem(SETTINGS_KEY)||'{}')}}catch{return {...defaults}}}
-function readControls(){return {cover:$('cover-enabled').checked,openSpotify:$('open-spotify').checked,offline:$('show-offline').checked,interchange:$('interchange').checked,censor:$('censor').checked,hideRemaster:$('hide-remaster').checked,wave:$('show-wave').checked,bar:$('bar-color').value,background:$('background-color').value,automatic:$('automatic-color').checked,gradient:$('gradient-enabled').checked,shadow:$('shadow-color').value,mid:$('mid-color').value,highlight:$('highlight-color').value,strength:Number($('gradient-strength').value)}}
-function restoreControls(){const s=loadSettings();const map={'cover-enabled':'cover','open-spotify':'openSpotify','show-offline':'offline','interchange':'interchange','censor':'censor','hide-remaster':'hideRemaster','show-wave':'wave','bar-color':'bar','background-color':'background','automatic-color':'automatic','gradient-enabled':'gradient','shadow-color':'shadow','mid-color':'mid','highlight-color':'highlight','gradient-strength':'strength'};for(const [id,key] of Object.entries(map)){const el=$(id);if(el.type==='checkbox')el.checked=Boolean(s[key]);else el.value=String(s[key]);}render();}
-function cleanText(text,s){let out=String(text||'');if(s.hideRemaster)out=out.replace(/\s*[-–(]?\s*\d{4}\s+Remaster[^)]*\)?/ig,'').replace(/\s*\(Remaster(ed)?[^)]*\)/ig,'').trim();if(s.censor)out=out.replace(/\b(fuck|fucking|shit|bitch|damn|asshole)\b/ig,'••••');return out;}
-function render(){const s=readControls();let artist=cleanText(track?.artist,s),title=cleanText(track?.title,s);if(s.interchange)[artist,title]=[title,artist];$('preview-artist').textContent=artist;$('preview-song').textContent=title||(track?'Unknown track':'Connect Spotify to show your track');$('preview-art').style.display=s.cover&&track?.art?'block':'none';$('preview-wave').style.display=s.wave?'block':'none';$('preview-link').href=s.openSpotify&&track?.url?track.url:'#';$('preview-link').style.pointerEvents=s.openSpotify&&track?.url?'auto':'none';$('widget-preview').style.background=s.background;$('widget-preview').style.setProperty('--bar-color',s.bar);$('widget-preview').style.setProperty('--shadow',s.shadow);$('widget-preview').style.setProperty('--mid',s.mid);$('widget-preview').style.setProperty('--highlight',s.highlight);$('widget-preview').style.setProperty('--map-strength',s.gradient?s.strength/100:0);$('gradient-ramp').style.background=`linear-gradient(90deg,${s.shadow},${s.mid} 50%,${s.highlight})`;$('strength-output').value=`${s.strength}%`;if(s.automatic&&track?.dominantColor){$('bar-color').value=track.dominantColor;$('widget-preview').style.setProperty('--bar-color',track.dominantColor);}updateCode(s);if(track?.art)renderGradientMap();}
-function saveSettings(){localStorage.setItem(SETTINGS_KEY,JSON.stringify(readControls()));render();}
-function parseHex(hex){const v=hex.replace('#','');return [parseInt(v.slice(0,2),16),parseInt(v.slice(2,4),16),parseInt(v.slice(4,6),16)];}
-function hexColor(rgb){return `#${rgb.map(v=>Math.max(0,Math.min(255,Math.round(v))).toString(16).padStart(2,'0')).join('')}`;}
-function gradientColor(luma,s){const stops=[{at:0,color:parseHex(s.shadow)},{at:.5,color:parseHex(s.mid)},{at:1,color:parseHex(s.highlight)}];let left=stops[0],right=stops[1];if(luma>.5){left=stops[1];right=stops[2];}const t=Math.max(0,Math.min(1,(luma-left.at)/(right.at-left.at)));return left.color.map((v,i)=>v+(right.color[i]-v)*t);}
-function renderGradientMap(){const id=++gradientRenderId;const image=$('preview-art');const canvas=$('gradient-canvas');if(!track?.art||!readControls().gradient){canvas.style.display='none';return;}canvas.style.display='block';const s=readControls();const img=new Image();img.crossOrigin='anonymous';img.onload=()=>{if(id!==gradientRenderId)return;try{const size=180;const c=document.createElement('canvas');c.width=size;c.height=size;const ctx=c.getContext('2d',{willReadFrequently:true});ctx.drawImage(img,0,0,size,size);const pixels=ctx.getImageData(0,0,size,size);const data=pixels.data;const strength=s.strength/100;for(let i=0;i<data.length;i+=4){const r=data[i],g=data[i+1],b=data[i+2];const luma=(.2126*r+.7152*g+.0722*b)/255;const mapped=gradientColor(luma,s);data[i]=r+(mapped[0]-r)*strength;data[i+1]=g+(mapped[1]-g)*strength;data[i+2]=b+(mapped[2]-b)*strength;}ctx.putImageData(pixels,0,0);canvas.width=size;canvas.height=size;canvas.getContext('2d').putImageData(pixels,0,0);canvas.style.width='100%';canvas.style.height='100%';}catch(error){canvas.style.display='none';$('status-message').textContent='The album art host blocks canvas color mapping (CORS), so the cover is shown unchanged. You can still customize the widget.';}};img.onerror=()=>{canvas.style.display='none';};img.src=track.art;}
-function previewUrl(){const s=readControls();const p=new URLSearchParams({artist:track?.artist||'',title:track?.title||'',art:track?.art||'',track_url:track?.url||'',cover:String(s.cover),open_spotify:String(s.openSpotify),offline:String(s.offline),interchange:String(s.interchange),censor:String(s.censor),hide_remaster:String(s.hideRemaster),wave:String(s.wave),bar:s.bar,background:s.background,gradient:String(s.gradient),shadow:s.shadow,mid:s.mid,highlight:s.highlight,strength:String(s.strength)});return `${location.origin}/preview.html?${p}`;}
-function updateCode(){const url=previewUrl();const markdown=`[![Spotify Now Playing](${url})](https://github.com/khomedy/khomedy.github.io)`;const html=`<a href="https://github.com/khomedy/khomedy.github.io"><img src="${url.replaceAll('&','&amp;').replaceAll('"','&quot;')}" alt="Spotify Now Playing"></a>`;$('code-output').value=codeFormat==='markdown'?markdown:html;}
-function setCodeFormat(format){codeFormat=format;for(const name of ['markdown','html']){$(`${name}-tab`).classList.toggle('active',name===format);$(`${name}-tab`).setAttribute('aria-selected',String(name===format));}updateCode();}
-async function copyCode(){try{await navigator.clipboard.writeText($('code-output').value);$('copy-code').innerHTML='<span aria-hidden="true">✓</span> Copied';setTimeout(()=>$('copy-code').innerHTML='<span aria-hidden="true">▢</span> Copy to clipboard',1500);}catch{$('code-output').focus();$('code-output').select();$('status-message').textContent='Select and copy the generated code.';}}
-function setSignedIn(ok){$('connection-status').textContent=ok?'✓ Signed in to Spotify':'Not signed in';$('connection-status').classList.toggle('signed-in',ok);$('spotify-connect').classList.toggle('hidden',ok);$('spotify-disconnect').classList.toggle('hidden',!ok);}
-function randomVerifier(){const bytes=crypto.getRandomValues(new Uint8Array(64));return [...bytes].map(b=>b.toString(16).padStart(2,'0')).join('');}
-async function connectSpotify(){try{const verifier=randomVerifier();const digest=await crypto.subtle.digest('SHA-256',new TextEncoder().encode(verifier));const challenge=btoa(String.fromCharCode(...new Uint8Array(digest))).replace(/\+/g,'-').replace(/\//g,'_').replace(/=+$/g,'');const state=randomVerifier().slice(0,32);sessionStorage.setItem(VERIFIER_KEY,verifier);sessionStorage.setItem(STATE_KEY,state);const q=new URLSearchParams({client_id:CLIENT_ID,response_type:'code',redirect_uri:REDIRECT_URI,scope:SCOPE,state,code_challenge_method:'S256',code_challenge:challenge});location.assign(`https://accounts.spotify.com/authorize?${q}`);}catch(e){$('status-message').textContent=`Could not start Spotify sign-in: ${e.message}`;}}
-function getTokens(){try{return JSON.parse(localStorage.getItem(TOKEN_KEY)||'null')}catch{return null}}
-function storeTokens(data,old={}){localStorage.setItem(TOKEN_KEY,JSON.stringify({access:data.access_token,refresh:data.refresh_token||old.refresh,expires:Date.now()+(data.expires_in||3600)*1000}));}
-async function getAccessToken(){let t=getTokens();if(!t)return null;if(Date.now()<t.expires-30000)return t.access;if(!t.refresh){localStorage.removeItem(TOKEN_KEY);setSignedIn(false);return null;}const response=await fetch('https://accounts.spotify.com/api/token',{method:'POST',headers:{'Content-Type':'application/x-www-form-urlencoded'},body:new URLSearchParams({client_id:CLIENT_ID,grant_type:'refresh_token',refresh_token:t.refresh})});const data=await response.json();if(!response.ok)throw new Error(data.error_description||`Token refresh failed (HTTP ${response.status}).`);storeTokens(data,t);return getTokens().access;}
-async function spotifyFetch(path,access){const r=await fetch(`https://api.spotify.com/v1${path}`,{headers:{Authorization:`Bearer ${access}`}});if(r.status===204)return {response:r,data:null};const data=await r.json().catch(()=>null);return {response:r,data};}
-async function pollSpotify(){try{const access=await getAccessToken();if(!access){setSignedIn(false);return;}setSignedIn(true);const now=await spotifyFetch('/me/player/currently-playing',access);if(now.response.ok&&now.data?.item){applyTrack(now.data.item,now.data.item.external_urls?.spotify,'Now playing on Spotify');return;}if(![204,200].includes(now.response.status)&&now.response.status!==403){$('status-message').textContent=`Signed in, but Spotify returned HTTP ${now.response.status} for current playback.`;return;}if(readControls().offline){const recent=await spotifyFetch('/me/player/recently-played?limit=1',access);if(recent.response.ok&&recent.data?.items?.[0]?.track){const item=recent.data.items[0].track;applyTrack(item,item.external_urls?.spotify,'Recently played on Spotify');return;}if(!recent.response.ok){$('status-message').textContent=`Signed in to Spotify, but recent playback returned HTTP ${recent.response.status}.` ;return;}}$('status-message').textContent='Signed in to Spotify. No current track is playing; turn on “Show recently played when offline” to use your last track.';}catch(e){$('status-message').textContent=`Spotify connection issue: ${e.message}`;}}
-function applyTrack(item,url,label){track={artist:item.artists?.map(a=>a.name).join(', ')||'Unknown artist',title:item.name||'Unknown track',art:item.album?.images?.[0]?.url||'',url:url||'',dominantColor:null};$('status-message').textContent=`✓ Signed in · ${label}`;render();}
-async function handleCallback(){const q=new URLSearchParams(location.search);const code=q.get('code'),state=q.get('state');if(q.has('error')){$('status-message').textContent=`Spotify sign-in canceled: ${q.get('error')}.`;history.replaceState({},document.title,location.pathname);return;}const verifier=sessionStorage.getItem(VERIFIER_KEY);if(!code||!state||state!==sessionStorage.getItem(STATE_KEY)||!verifier){$('status-message').textContent='Spotify sign-in could not be verified. Please connect again.';history.replaceState({},document.title,location.pathname);return;}try{$('status-message').textContent='Finishing Spotify sign-in…';const response=await fetch('https://accounts.spotify.com/api/token',{method:'POST',headers:{'Content-Type':'application/x-www-form-urlencoded'},body:new URLSearchParams({client_id:CLIENT_ID,grant_type:'authorization_code',code,redirect_uri:REDIRECT_URI,code_verifier:verifier})});const data=await response.json();if(!response.ok)throw new Error(data.error_description||`Token exchange failed (HTTP ${response.status}).`);storeTokens(data);sessionStorage.removeItem(STATE_KEY);sessionStorage.removeItem(VERIFIER_KEY);history.replaceState({},document.title,location.pathname);setSignedIn(true);await pollSpotify();pollTimer=setInterval(pollSpotify,POLL_INTERVAL);}catch(e){$('status-message').textContent=`Spotify sign-in did not finish: ${e.message}`;history.replaceState({},document.title,location.pathname);}}
-function disconnect(){localStorage.removeItem(TOKEN_KEY);clearInterval(pollTimer);track=null;setSignedIn(false);render();$('status-message').textContent='Disconnected from Spotify.';}
-for(const id of settingIds){$(id).addEventListener('input',saveSettings);$(id).addEventListener('change',saveSettings);}
-$('spotify-connect').addEventListener('click',connectSpotify);$('spotify-disconnect').addEventListener('click',disconnect);$('markdown-tab').addEventListener('click',()=>setCodeFormat('markdown'));$('html-tab').addEventListener('click',()=>setCodeFormat('html'));$('copy-code').addEventListener('click',copyCode);
-restoreControls();const callback=new URLSearchParams(location.search);if(callback.has('code')||callback.has('error'))handleCallback();else if(getTokens()){setSignedIn(true);$('status-message').textContent='Signed in to Spotify. Checking current and recent playback…';pollSpotify();pollTimer=setInterval(pollSpotify,POLL_INTERVAL);}else setSignedIn(false);
+function hexValue(inputId) {
+  return $(inputId).value.replace(/^#/, '').toUpperCase();
+}
+
+function settings() {
+  return {
+    uid: $('spotify-uid').value.trim(),
+    profile: $('profile-link').value.trim(),
+    cover: $('cover-image').checked,
+    openSpotify: $('open-spotify').checked,
+    offline: $('show-offline').checked,
+    interchange: $('interchange').checked,
+    profanity: $('profanity').checked,
+    hideRemaster: $('hide-remaster').checked,
+    bar: hexValue('bar-color'),
+    background: hexValue('background-color'),
+    barCover: $('bar-color-cover').checked,
+  };
+}
+
+function widgetUrl(s = settings()) {
+  const query = new URLSearchParams({
+    uid: s.uid,
+    cover_image: String(s.cover),
+    theme: 'novatorem',
+    show_offline: String(s.offline),
+    background_color: s.background,
+    interchange: String(s.interchange),
+    profanity: String(s.profanity),
+    hide_remaster: String(s.hideRemaster),
+    bar_color: s.bar,
+    bar_color_cover: String(s.barCover),
+  });
+  return `${API_BASE}?${query.toString()}`;
+}
+
+function escapeHtml(text) {
+  return String(text).replace(/[&<>"']/g, (char) => ({
+    '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;',
+  })[char]);
+}
+
+function updateCode(s = settings()) {
+  if (!s.uid) {
+    $('code-output').value = '';
+    return;
+  }
+  const image = widgetUrl(s);
+  const markdown = `[![spotify-github-profile](${image})](${s.profile || image})`;
+  const html = `<p align="center">\n  <a href="${escapeHtml(s.profile || image)}">\n    <img src="${escapeHtml(image)}" alt="spotify-github-profile">\n  </a>\n</p>`;
+  $('code-output').value = codeFormat === 'markdown' ? markdown : html;
+}
+
+function refreshWidget() {
+  const s = settings();
+  clearTimeout(loadTimer);
+  $('widget-status').textContent = s.uid ? 'Loading Novatorem widget…' : 'Enter your Spotify UID';
+  $('widget-preview').alt = s.uid ? 'Loading Novatorem widget for Spotify UID ' + s.uid : 'Enter your Spotify UID to preview the widget';
+  $('widget-preview').removeAttribute('src');
+  updateCode(s);
+  if (!s.uid) return;
+  loadTimer = setTimeout(() => {
+    const image = $('widget-preview');
+    image.onload = () => { $('widget-status').textContent = 'Widget loaded · Novatorem'; };
+    image.onerror = () => { $('widget-status').textContent = 'Widget could not load. Check the Spotify UID or try again later.'; };
+    image.src = widgetUrl(s);
+  }, 180);
+}
+
+function restoreSettings() {
+  try {
+    const saved = JSON.parse(localStorage.getItem(STORAGE_KEY) || '{}');
+    if (saved.uid) $('spotify-uid').value = saved.uid;
+    if (saved.profile) $('profile-link').value = saved.profile;
+    if (saved.bar) $('bar-color').value = `#${saved.bar.replace(/^#/, '')}`;
+    if (saved.background) $('background-color').value = `#${saved.background.replace(/^#/, '')}`;
+    for (const id of settingIds) {
+      if (typeof saved[id] === 'boolean') $(id).checked = saved[id];
+    }
+  } catch { /* Start with the documented example defaults. */ }
+  refreshWidget();
+}
+
+function saveAndRefresh() {
+  const s = settings();
+  const saved = {
+    uid: s.uid,
+    profile: s.profile,
+    bar: s.bar,
+    background: s.background,
+  };
+  for (const id of settingIds) saved[id] = $(id).checked;
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(saved));
+  refreshWidget();
+}
+
+function selectFormat(format) {
+  codeFormat = format;
+  for (const name of ['markdown', 'html']) {
+    $(`${name}-tab`).classList.toggle('active', name === format);
+    $(`${name}-tab`).setAttribute('aria-selected', String(name === format));
+  }
+  updateCode();
+}
+
+async function copyCode() {
+  const output = $('code-output');
+  try {
+    await navigator.clipboard.writeText(output.value);
+    $('copy-status').textContent = 'Copied to clipboard.';
+  } catch {
+    output.focus();
+    output.select();
+    $('copy-status').textContent = 'Clipboard access is unavailable. The code is selected—copy it manually.';
+  }
+}
+
+for (const id of [...settingIds, 'spotify-uid', 'profile-link', 'bar-color', 'background-color']) {
+  $(id).addEventListener('input', saveAndRefresh);
+  $(id).addEventListener('change', saveAndRefresh);
+}
+$('markdown-tab').addEventListener('click', () => selectFormat('markdown'));
+$('html-tab').addEventListener('click', () => selectFormat('html'));
+$('copy-code').addEventListener('click', copyCode);
+restoreSettings();

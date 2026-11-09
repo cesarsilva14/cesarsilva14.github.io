@@ -1,12 +1,10 @@
-# Spotify GitHub Profile Widget
+# Spotify GitHub Profile Widget Generator
 
-A Novatorem-only Spotify profile widget customizer for GitHub Pages.
+A small Novatorem-only generator for the Kittinanx Spotify GitHub Profile image service.
 
-- Sign in with Spotify using Authorization Code + PKCE.
-- While the studio is open, it checks the currently playing track and falls back to the most recently played track when playback is idle.
-- Customize the Novatorem-style bar, cover, and a real luminance-based gradient map with shadow, midtone, highlight, and strength controls.
-- Copy Markdown or HTML for a shareable preview.
+- Uses the live image endpoint at `https://spotify-github-profile.kittinanx.com/api/view` for both preview and generated embeds.
+- Generates Markdown and HTML using the configured Spotify UID and profile link.
+- Exposes the Novatorem settings supported by the example configuration: cover image, offline display, artist/song interchange, profanity and remaster options, background and bar colors, and cover-derived bar color.
+- Does not use a fake sample track or a separate Spotify OAuth flow; the Kittinanx widget service resolves the account's listening activity from the Spotify UID.
 
-Spotify redirect URI: `https://khomedy.github.io/callback.html`.
-
-GitHub Pages is static hosting. The generator can show and poll Spotify data in the signed-in browser, but an automatically updating image in a GitHub README needs a separate image-serving backend; README image requests do not carry the browser's Spotify login.
+The default UID and profile link are the ones in the user's supplied snippet. The generator does not own or operate the Kittinanx service.
