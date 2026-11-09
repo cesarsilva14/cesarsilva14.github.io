@@ -3,107 +3,76 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <meta name="theme-color" content="#0a1016" />
+    <meta name="theme-color" content="#ffffff" />
     <title>Now Playing Widget Studio</title>
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700;800&display=swap" rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
     <link rel="stylesheet" href="style.css" />
   </head>
   <body>
     <main class="studio-shell">
-      <header class="hero">
-        <p class="eyebrow">README widget studio</p>
-        <h1>Now Playing <span>Widget</span> Studio</h1>
-        <p class="subtitle">Customize the card before you paste it into GitHub. Spotify is optional — the widget works even without a live connection.</p>
+      <header class="page-header">
+        <div>
+          <p class="eyebrow">README widget studio</p>
+          <h1>Make your music <span>yours.</span></h1>
+          <p class="subtitle">Connect Spotify, tune the album-art gradient, and preview your widget as you edit.</p>
+        </div>
+        <div class="account-area">
+          <span id="connection-status" class="connection-status" role="status">Not connected</span>
+          <button id="spotify-connect" class="connect-button" type="button">Connect Spotify</button>
+          <button id="spotify-disconnect" class="disconnect-button hidden" type="button">Disconnect</button>
+        </div>
       </header>
 
       <div class="studio-grid">
-        <section class="panel preview-panel">
-          <div class="preview-topbar">
-            <span class="status-badge">Now Playing</span>
-            <button id="spotify-connect" class="ghost-button" type="button">Connect Spotify</button>
+        <section class="panel controls-panel" aria-labelledby="controls-title">
+          <div class="section-heading">
+            <div><p class="eyebrow">Design</p><h2 id="controls-title">Customize widget</h2></div>
+            <span class="autosave">Saved in this browser</span>
           </div>
 
-          <div id="widget-preview" class="widget-preview">
-            <div class="cover-art" aria-hidden="true"></div>
-            <div class="widget-copy">
-              <p class="listening-label">Listening to</p>
-              <h2 id="preview-title">Midnight City</h2>
-              <p id="preview-artist" class="artist-name">M83</p>
-              <p id="preview-album" class="album-name">Hurry Up, We’re Dreaming</p>
+          <div class="field-grid">
+            <label class="field"><span>Artist</span><input id="artist-input" type="text" value="M83" /></label>
+            <label class="field"><span>Song</span><input id="title-input" type="text" value="Midnight City" /></label>
+            <label class="field full-field"><span>Album art URL</span><input id="art-input" type="url" value="https://images.unsplash.com/photo-1516280440614-37939bbacd81?auto=format&fit=crop&w=900&q=80" /></label>
+          </div>
+
+          <section class="gradient-editor" aria-labelledby="gradient-title">
+            <div class="gradient-heading"><div><p class="eyebrow">Album cover</p><h3 id="gradient-title">Gradient map</h3></div><span class="gradient-hint">Map shadows to highlights</span></div>
+            <div id="gradient-ramp" class="gradient-ramp" aria-label="Gradient map color ramp">
+              <input id="stop-0" class="gradient-stop stop-0" type="color" value="#172b46" aria-label="Shadow color" title="Shadow color" />
+              <input id="stop-1" class="gradient-stop stop-1" type="color" value="#8167a8" aria-label="Midtone color" title="Midtone color" />
+              <input id="stop-2" class="gradient-stop stop-2" type="color" value="#ffd6a0" aria-label="Highlight color" title="Highlight color" />
             </div>
-          </div>
+            <div class="gradient-labels"><span>Shadows</span><span>Midtones</span><span>Highlights</span></div>
+            <label class="field amount-field"><span>Map strength <output id="strength-value">62%</output></span><input id="strength-input" type="range" min="0" max="100" value="62" /></label>
+            <label class="field amount-field"><span>Widget corner radius <output id="radius-value">12 px</output></span><input id="radius-input" type="range" min="0" max="36" value="12" /></label>
+          </section>
 
-          <div class="action-row">
-            <button id="copy-link" class="primary-button" type="button">Copy preview URL</button>
-            <button id="copy-markdown" class="secondary-button" type="button">Copy markdown</button>
+          <div class="color-row">
+            <label class="field small-field"><span>Text color</span><input id="text-color-input" type="color" value="#30343b" /></label>
+            <label class="field small-field"><span>Wave color</span><input id="wave-color-input" type="color" value="#8c62c7" /></label>
           </div>
-
-          <p id="status-message" class="status-message" aria-live="polite"></p>
+          <div class="toggle-row">
+            <label><input id="show-wave" type="checkbox" checked /> Wavy line</label>
+            <label><input id="show-gradient" type="checkbox" checked /> Gradient map</label>
+          </div>
+          <p id="status-message" class="status-message" aria-live="polite">Connect Spotify to load the track you’re playing.</p>
         </section>
 
-        <aside class="panel controls-panel">
-          <h2>Customize</h2>
-
-          <label class="field">
-            <span>Song title</span>
-            <input id="title-input" type="text" value="Midnight City" />
-          </label>
-
-          <label class="field">
-            <span>Artist</span>
-            <input id="artist-input" type="text" value="M83" />
-          </label>
-
-          <label class="field">
-            <span>Album</span>
-            <input id="album-input" type="text" value="Hurry Up, We’re Dreaming" />
-          </label>
-
-          <label class="field">
-            <span>Album art URL</span>
-            <input id="art-input" type="url" value="https://images.unsplash.com/photo-1516280440614-37939bbacd81?auto=format&fit=crop&w=900&q=80" />
-          </label>
-
-          <div class="color-grid">
-            <label class="field color-field">
-              <span>Gradient start</span>
-              <input id="bg1-input" type="color" value="#0d1b19" />
-            </label>
-            <label class="field color-field">
-              <span>Gradient end</span>
-              <input id="bg2-input" type="color" value="#0a2d30" />
-            </label>
-            <label class="field color-field">
-              <span>Accent</span>
-              <input id="accent-input" type="color" value="#93f5c7" />
-            </label>
-            <label class="field color-field">
-              <span>Text</span>
-              <input id="text-input" type="color" value="#f2f7f5" />
-            </label>
+        <section class="panel preview-panel" aria-labelledby="preview-title-heading">
+          <div class="section-heading"><div><p class="eyebrow">Live preview</p><h2 id="preview-title-heading">Your widget</h2></div><span id="track-updated" class="track-updated">Preview sample</span></div>
+          <div id="widget-preview" class="widget-preview" aria-label="Now playing widget preview">
+            <div class="cover-frame"><img id="preview-art" alt="Album cover" src="https://images.unsplash.com/photo-1516280440614-37939bbacd81?auto=format&fit=crop&w=900&q=80" /><div class="gradient-map" aria-hidden="true"></div></div>
+            <div class="widget-details"><p id="preview-artist" class="preview-artist">M83</p><h3 id="preview-song" class="preview-song">Midnight City</h3><svg id="wave-line" class="wave-line" viewBox="0 0 360 28" preserveAspectRatio="none" aria-label="Decorative audio wave"><path d="M0 14 C12 14 12 4 24 4 S36 24 48 24 60 8 72 8 84 19 96 19 108 3 120 3 132 25 144 25 156 10 168 10 180 18 192 18 204 5 216 5 228 23 240 23 252 8 264 8 276 18 288 18 300 4 312 4 324 24 336 24 348 12 360 12" /></svg></div>
           </div>
-
-          <label class="field">
-            <span>Overlay opacity</span>
-            <input id="overlay-input" type="range" min="0" max="100" value="56" />
-          </label>
-
-          <label class="field">
-            <span>Corner radius</span>
-            <input id="radius-input" type="range" min="8" max="40" value="26" />
-          </label>
-
-          <div class="toggle-row">
-            <label><input id="show-art" type="checkbox" checked /> Show art</label>
-            <label><input id="show-album" type="checkbox" checked /> Show album</label>
-            <label><input id="show-artist" type="checkbox" checked /> Show artist</label>
-          </div>
-        </aside>
+          <p class="preview-note">No card background: just the cover, track details, and your color-mapped artwork.</p>
+          <div class="readme-box"><div><strong>Put it in a README</strong><p>Copy a link to this design or the preview page. A truly live README image needs a small server endpoint; GitHub Pages cannot refresh an image from your Spotify account by itself.</p></div><button id="copy-link" class="copy-button" type="button">Copy preview link</button></div>
+          <p id="copy-status" class="copy-status" aria-live="polite"></p>
+        </section>
       </div>
     </main>
-
     <script src="app.js"></script>
   </body>
 </html>

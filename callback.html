@@ -1,16 +1,12 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Returning to Spotify Widget Studio</title>
-  </head>
-  <body>
-    <p>Returning to your widget…</p>
-    <script>
-      // GitHub Pages serves this file as the exact Spotify redirect URI.
-      // Preserve the OAuth query so the home page can finish the PKCE exchange.
-      window.location.replace("/" + window.location.search + window.location.hash);
-    </script>
-  </body>
+<head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>Spotify sign-in</title></head>
+<body>
+  <p>Returning to your widget studio…</p>
+  <script>
+    // Keep Spotify's authorization code and state in the URL so app.js can
+    // validate the state and exchange the code with the original PKCE verifier.
+    window.location.replace('/' + window.location.search + window.location.hash);
+  </script>
+</body>
 </html>
