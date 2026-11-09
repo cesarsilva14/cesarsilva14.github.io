@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Spotify Now Playing</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700;800&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body>
+    <main class="app-shell">
+      <section class="card">
+        <div class="status-row">
+          <span class="badge">Now Playing</span>
+          <button id="logout-button" class="ghost-button hidden">Log out</button>
+        </div>
+
+        <div id="track-container" class="track-container hidden">
+          <img id="album-art" alt="Album art" class="album-art" />
+
+          <div class="track-meta">
+            <p class="label">Listening to</p>
+            <h1 id="track-name">Loading...</h1>
+            <p id="artist-name" class="artist"></p>
+            <p id="album-name" class="album"></p>
+            <a id="spotify-link" class="spotify-link" href="#" target="_blank" rel="noreferrer">Open in Spotify</a>
+          </div>
+        </div>
+
+        <div id="empty-state" class="empty-state">
+          <div class="spotify-icon">♪</div>
+          <p>Connect your Spotify to show what you’re listening to.</p>
+          <button id="connect-button" class="primary-button">Connect Spotify</button>
+        </div>
+
+        <div id="error-state" class="error-state hidden"></div>
+      </section>
+    </main>
+
+    <script src="app.js"></script>
+  </body>
+</html>
