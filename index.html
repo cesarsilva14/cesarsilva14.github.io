@@ -3,84 +3,107 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <meta name="theme-color" content="#071610" />
-    <title>Spotify Widget Studio</title>
+    <meta name="theme-color" content="#0a1016" />
+    <title>Now Playing Widget Studio</title>
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700;800&display=swap" rel="stylesheet" />
     <link rel="stylesheet" href="style.css" />
   </head>
   <body>
-    <main class="app-shell">
-      <header class="page-heading">
-        <p class="eyebrow">Your music, your style</p>
-        <h1>Now Playing <span>Widget Studio</span></h1>
-        <p class="intro">Connect Spotify, then customize the live preview to match your profile.</p>
+    <main class="studio-shell">
+      <header class="hero">
+        <p class="eyebrow">README widget studio</p>
+        <h1>Now Playing <span>Widget</span> Studio</h1>
+        <p class="subtitle">Customize the card before you paste it into GitHub. Spotify is optional — the widget works even without a live connection.</p>
       </header>
 
-      <section class="card preview-card" aria-label="Widget preview">
-        <div class="status-row">
-          <span class="badge">Now Playing</span>
-          <button id="logout-button" class="ghost-button hidden" type="button">Disconnect</button>
-        </div>
-
-        <div id="track-container" class="track-container hidden">
-          <img id="album-art" alt="Album art" class="album-art" />
-          <div class="track-meta">
-            <p class="label">Listening to</p>
-            <h2 id="track-name">Loading...</h2>
-            <p id="artist-name" class="artist"></p>
-            <p id="album-name" class="album"></p>
-            <a id="spotify-link" class="spotify-link" href="#" target="_blank" rel="noreferrer">Open in Spotify ↗</a>
+      <div class="studio-grid">
+        <section class="panel preview-panel">
+          <div class="preview-topbar">
+            <span class="status-badge">Now Playing</span>
+            <button id="spotify-connect" class="ghost-button" type="button">Connect Spotify</button>
           </div>
-        </div>
 
-        <div id="empty-state" class="empty-state">
-          <div class="spotify-icon">♪</div>
-          <p>Connect your Spotify account to preview your widget.</p>
-          <button id="connect-button" class="primary-button" type="button">Connect Spotify</button>
-        </div>
-
-        <div id="error-state" class="error-state hidden" role="alert"></div>
-      </section>
-
-      <section id="customizer" class="card customizer hidden" aria-labelledby="customizer-title">
-        <div>
-          <p class="eyebrow">Make it yours</p>
-          <h2 id="customizer-title">Customize your widget</h2>
-          <p class="muted">Changes appear in the preview above and are saved in this browser.</p>
-        </div>
-
-        <div class="controls-grid">
-          <label class="control">
-            <span>Style</span>
-            <select id="theme-select">
-              <option value="green">Spotify green</option>
-              <option value="midnight">Midnight</option>
-              <option value="lavender">Lavender</option>
-            </select>
-          </label>
-          <label class="control color-control">
-            <span>Accent color</span>
-            <input id="accent-color" type="color" value="#1db954" />
-          </label>
-          <label class="check-control"><input id="show-art" type="checkbox" checked /> Show album art</label>
-          <label class="check-control"><input id="show-album" type="checkbox" checked /> Show album name</label>
-          <label class="check-control"><input id="show-artist" type="checkbox" checked /> Show artist</label>
-        </div>
-
-        <div class="share-box">
-          <div>
-            <strong>Use it on your profile</strong>
-            <p class="muted">This link opens your site. A live image embed for README needs a backend, which this static GitHub Pages site doesn’t have yet.</p>
+          <div id="widget-preview" class="widget-preview">
+            <div class="cover-art" aria-hidden="true"></div>
+            <div class="widget-copy">
+              <p class="listening-label">Listening to</p>
+              <h2 id="preview-title">Midnight City</h2>
+              <p id="preview-artist" class="artist-name">M83</p>
+              <p id="preview-album" class="album-name">Hurry Up, We’re Dreaming</p>
+            </div>
           </div>
-          <button id="copy-link" class="secondary-button" type="button">Copy site link</button>
-        </div>
-        <p id="copy-status" class="copy-status" aria-live="polite"></p>
-      </section>
 
-      <footer>Built with Spotify and GitHub Pages</footer>
+          <div class="action-row">
+            <button id="copy-link" class="primary-button" type="button">Copy preview URL</button>
+            <button id="copy-markdown" class="secondary-button" type="button">Copy markdown</button>
+          </div>
+
+          <p id="status-message" class="status-message" aria-live="polite"></p>
+        </section>
+
+        <aside class="panel controls-panel">
+          <h2>Customize</h2>
+
+          <label class="field">
+            <span>Song title</span>
+            <input id="title-input" type="text" value="Midnight City" />
+          </label>
+
+          <label class="field">
+            <span>Artist</span>
+            <input id="artist-input" type="text" value="M83" />
+          </label>
+
+          <label class="field">
+            <span>Album</span>
+            <input id="album-input" type="text" value="Hurry Up, We’re Dreaming" />
+          </label>
+
+          <label class="field">
+            <span>Album art URL</span>
+            <input id="art-input" type="url" value="https://images.unsplash.com/photo-1516280440614-37939bbacd81?auto=format&fit=crop&w=900&q=80" />
+          </label>
+
+          <div class="color-grid">
+            <label class="field color-field">
+              <span>Gradient start</span>
+              <input id="bg1-input" type="color" value="#0d1b19" />
+            </label>
+            <label class="field color-field">
+              <span>Gradient end</span>
+              <input id="bg2-input" type="color" value="#0a2d30" />
+            </label>
+            <label class="field color-field">
+              <span>Accent</span>
+              <input id="accent-input" type="color" value="#93f5c7" />
+            </label>
+            <label class="field color-field">
+              <span>Text</span>
+              <input id="text-input" type="color" value="#f2f7f5" />
+            </label>
+          </div>
+
+          <label class="field">
+            <span>Overlay opacity</span>
+            <input id="overlay-input" type="range" min="0" max="100" value="56" />
+          </label>
+
+          <label class="field">
+            <span>Corner radius</span>
+            <input id="radius-input" type="range" min="8" max="40" value="26" />
+          </label>
+
+          <div class="toggle-row">
+            <label><input id="show-art" type="checkbox" checked /> Show art</label>
+            <label><input id="show-album" type="checkbox" checked /> Show album</label>
+            <label><input id="show-artist" type="checkbox" checked /> Show artist</label>
+          </div>
+        </aside>
+      </div>
     </main>
+
     <script src="app.js"></script>
   </body>
 </html>

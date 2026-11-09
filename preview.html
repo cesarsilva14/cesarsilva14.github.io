@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Now Playing Preview</title>
+    <style>
+      :root {
+        --bg1: #0d1b19;
+        --bg2: #0a2d30;
+        --accent: #93f5c7;
+        --text: #f2f7f5;
+        --radius: 26px;
+        --overlay-opacity: 0.56;
+      }
+
+      * { box-sizing: border-box; }
+      html, body {
+        margin: 0;
+        min-height: 100%;
+        font-family: Inter, system-ui, sans-serif;
+        background: linear-gradient(135deg, var(--bg1), var(--bg2));
+        color: var(--text);
+      }
+
+      body {
+        min-height: 100vh;
+        display: grid;
+        place-items: center;
+        padding: 32px;
+      }
+
+      .preview-wrap {
+        width: min(100%, 760px);
+        padding: 18px;
+        border-radius: 24px;
+        background: rgba(8, 10, 12, 0.28);
+        border: 1px solid rgba(255,255,255,0.08);
+      }
+
+      .widget-preview {
+        position: relative;
+        overflow: hidden;
+        display: flex;
+        align-items: center;
+        gap: 22px;
+        min-height: 220px;
+        padding: 24px;
+        border-radius: var(--radius);
+        background: linear-gradient(135deg, var(--bg1), var(--bg2));
+        box-shadow: 0 22px 40px rgba(0,0,0,0.25);
+      }
+
+      .widget-preview::before {
+        content: "";
+        position: absolute;
+        inset: 0;
+        background: rgba(0,0,0,var(--overlay-opacity));
+      }
+
+      .cover-art {
+        position: relative;
+        z-index: 1;
+        width: 170px;
+        height: 170px;
+        border-radius: 16px;
+        background-size: cover;
+        background-position: center;
+        box-shadow: 0 18px 30px rgba(0,0,0,0.3);
+        flex-shrink: 0;
+      }
+
+      .widget-copy {
+        position: relative;
+        z-index: 1;
+        min-width: 0;
+      }
+
+      .label {
+        margin: 0 0 12px;
+        color: rgba(255,255,255,0.78);
+        font-size: 11px;
+        letter-spacing: 0.18em;
+        text-transform: uppercase;
+      }
+
+      h1 {
+        margin: 0;
+        font-size: clamp(2rem, 5vw, 3.5rem);
+        line-height: 0.95;
+        color: var(--text);
+      }
+
+      .artist-name {
+        margin: 10px 0 6px;
+        font-size: 1.1rem;
+        color: rgba(255,255,255,0.8);
+      }
+
+      .album-name {
+        margin: 0;
+        color: rgba(255,255,255,0.7);
+      }
+
+      .accent {
+        color: var(--accent);
+      }
+    </style>
+  </head>
+  <body>
+    <div class="preview-wrap">
+      <div class="widget-preview" id="widget-preview">
+        <div class="cover-art" id="cover-art"></div>
+        <div class="widget-copy">
+          <p class="label">Listening to</p>
+          <h1 id="title">Midnight City</h1>
+          <p id="artist" class="artist-name">M83</p>
+          <p id="album" class="album-name">Hurry Up, We’re Dreaming</p>
+        </div>
+      </div>
+    </div>
+
+    <script>
+      const params = new URLSearchParams(window.location.search);
+      const state = {
+        title: params.get('title') || 'Midnight City',
+        artist: params.get('artist') || 'M83',
+        album: params.get('album') || 'Hurry Up, We’re Dreaming',
+        art: params.get('art') || 'https://images.unsplash.com/photo-1516280440614-37939bbacd81?auto=format&fit=crop&w=900&q=80',
+        bg1: params.get('bg1') || '#0d1b19',
+        bg2: params.get('bg2') || '#0a2d30',
+        accent: params.get('accent') || '#93f5c7',
+        text: params.get('text') || '#f2f7f5',
+        overlay: Number(params.get('overlay') || 56),
+        radius: Number(params.get('radius') || 26),
+        showArt: params.get('showArt') !== 'false',
+        showAlbum: params.get('showAlbum') !== 'false',
+        showArtist: params.get('showArtist') !== 'false',
+      };
+
+      const root = document.documentElement;
+      root.style.setProperty('--bg1', state.bg1);
+      root.style.setProperty('--bg2', state.bg2);
+      root.style.setProperty('--accent', state.accent);
+      root.style.setProperty('--text', state.text);
+      root.style.setProperty('--overlay-opacity', String(state.overlay / 100));
+      root.style.setProperty('--radius', `${state.radius}px`);
+
+      document.getElementById('title').textContent = state.title;
+      document.getElementById('artist').textContent = state.artist;
+      document.getElementById('album').textContent = state.album;
+      document.getElementById('cover-art').style.backgroundImage = `linear-gradient(135deg, rgba(0,0,0,0.14), rgba(0,0,0,0.2)), url(${state.art})`;
+      document.getElementById('artist').style.display = state.showArtist ? 'block' : 'none';
+      document.getElementById('album').style.display = state.showAlbum ? 'block' : 'none';
+      document.getElementById('cover-art').style.display = state.showArt ? 'block' : 'none';
+    </script>
+  </body>
+</html>
