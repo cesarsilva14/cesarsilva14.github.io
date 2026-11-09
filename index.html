@@ -3,7 +3,8 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Spotify Now Playing</title>
+    <meta name="theme-color" content="#071610" />
+    <title>Spotify Widget Studio</title>
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700;800&display=swap" rel="stylesheet" />
@@ -11,34 +12,75 @@
   </head>
   <body>
     <main class="app-shell">
-      <section class="card">
+      <header class="page-heading">
+        <p class="eyebrow">Your music, your style</p>
+        <h1>Now Playing <span>Widget Studio</span></h1>
+        <p class="intro">Connect Spotify, then customize the live preview to match your profile.</p>
+      </header>
+
+      <section class="card preview-card" aria-label="Widget preview">
         <div class="status-row">
           <span class="badge">Now Playing</span>
-          <button id="logout-button" class="ghost-button hidden">Log out</button>
+          <button id="logout-button" class="ghost-button hidden" type="button">Disconnect</button>
         </div>
 
         <div id="track-container" class="track-container hidden">
           <img id="album-art" alt="Album art" class="album-art" />
-
           <div class="track-meta">
             <p class="label">Listening to</p>
-            <h1 id="track-name">Loading...</h1>
+            <h2 id="track-name">Loading...</h2>
             <p id="artist-name" class="artist"></p>
             <p id="album-name" class="album"></p>
-            <a id="spotify-link" class="spotify-link" href="#" target="_blank" rel="noreferrer">Open in Spotify</a>
+            <a id="spotify-link" class="spotify-link" href="#" target="_blank" rel="noreferrer">Open in Spotify ↗</a>
           </div>
         </div>
 
         <div id="empty-state" class="empty-state">
           <div class="spotify-icon">♪</div>
-          <p>Connect your Spotify to show what you’re listening to.</p>
-          <button id="connect-button" class="primary-button">Connect Spotify</button>
+          <p>Connect your Spotify account to preview your widget.</p>
+          <button id="connect-button" class="primary-button" type="button">Connect Spotify</button>
         </div>
 
-        <div id="error-state" class="error-state hidden"></div>
+        <div id="error-state" class="error-state hidden" role="alert"></div>
       </section>
-    </main>
 
+      <section id="customizer" class="card customizer hidden" aria-labelledby="customizer-title">
+        <div>
+          <p class="eyebrow">Make it yours</p>
+          <h2 id="customizer-title">Customize your widget</h2>
+          <p class="muted">Changes appear in the preview above and are saved in this browser.</p>
+        </div>
+
+        <div class="controls-grid">
+          <label class="control">
+            <span>Style</span>
+            <select id="theme-select">
+              <option value="green">Spotify green</option>
+              <option value="midnight">Midnight</option>
+              <option value="lavender">Lavender</option>
+            </select>
+          </label>
+          <label class="control color-control">
+            <span>Accent color</span>
+            <input id="accent-color" type="color" value="#1db954" />
+          </label>
+          <label class="check-control"><input id="show-art" type="checkbox" checked /> Show album art</label>
+          <label class="check-control"><input id="show-album" type="checkbox" checked /> Show album name</label>
+          <label class="check-control"><input id="show-artist" type="checkbox" checked /> Show artist</label>
+        </div>
+
+        <div class="share-box">
+          <div>
+            <strong>Use it on your profile</strong>
+            <p class="muted">This link opens your site. A live image embed for README needs a backend, which this static GitHub Pages site doesn’t have yet.</p>
+          </div>
+          <button id="copy-link" class="secondary-button" type="button">Copy site link</button>
+        </div>
+        <p id="copy-status" class="copy-status" aria-live="polite"></p>
+      </section>
+
+      <footer>Built with Spotify and GitHub Pages</footer>
+    </main>
     <script src="app.js"></script>
   </body>
 </html>

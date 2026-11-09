@@ -3,20 +3,14 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Spotify callback</title>
+    <title>Returning to Spotify Widget Studio</title>
   </head>
   <body>
+    <p>Returning to your widget…</p>
     <script>
-      const params = new URLSearchParams(window.location.search);
-      const code = params.get('code');
-      const state = params.get('state');
-      const error = params.get('error');
-
-      if (code || error) {
-        sessionStorage.setItem('spotify_callback_params', JSON.stringify({ code, state, error }));
-      }
-
-      window.location.replace('/');
+      // GitHub Pages serves this file as the exact Spotify redirect URI.
+      // Preserve the OAuth query so the home page can finish the PKCE exchange.
+      window.location.replace("/" + window.location.search + window.location.hash);
     </script>
   </body>
 </html>

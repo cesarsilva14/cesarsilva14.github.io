@@ -1,30 +1,13 @@
 # khomedy.github.io
 
-This is a GitHub Pages site that shows the Spotify song you're currently listening to.
+A personal Spotify Now Playing widget preview and customization page hosted on GitHub Pages.
 
 ## Setup
 
-1. Open the Spotify Developer Dashboard.
-2. Create a new app.
-3. Use the redirect URI:
-   `https://khomedy.github.io/callback`
-4. Add the app's Client ID to `app.js` if you want to reuse this project.
-5. Publish this repo to GitHub Pages.
+1. In the Spotify Developer Dashboard, set the app's redirect URI to exactly:
+   `https://khomedy.github.io/callback.html`
+2. Save the Spotify app settings.
+3. Visit [khomedy.github.io](https://khomedy.github.io/) and choose **Connect Spotify**.
+4. After authorization, customize the preview. Your style choices are saved in your browser.
 
-## What this does
-
-This site uses Spotify's Authorization Code with PKCE flow, which keeps the Client Secret off the front-end and works with a static GitHub Pages site.
-
-## Notes
-
-- The app will ask you to log into Spotify and grant permission to read your currently playing track.
-- When nothing is playing, it shows a friendly message.
-- The page can be embedded in your GitHub README as an image or linked directly.
-
-## Example README card
-
-```md
-![Now Playing](https://khomedy.github.io/)
-```
-
-If you want a dedicated image card instead of a full page, I can also build the SVG version for your README.
+The site uses Spotify Authorization Code with PKCE and does not include a Spotify client secret. Your Spotify authorization is stored only in your browser. This static site provides a personal preview; a public live README image requires a separate backend service.
