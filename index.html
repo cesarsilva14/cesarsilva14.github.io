@@ -11,17 +11,17 @@
   <link rel="stylesheet" href="style.css" />
 </head>
 <body>
-  <header class="topbar">spotify-github-profile.kittinanx.com</header>
+  <header class="topbar">Spotify GitHub Profile Widget</header>
   <main class="page">
     <header class="page-heading">
-      <div><p class="eyebrow">Novatorem theme only</p><h1>Spotify GitHub Profile</h1><p class="intro">Configure your Novatorem Spotify profile widget and copy the embed for your README.</p></div>
-      <span id="widget-status" class="widget-status" role="status">Loading widget…</span>
+      <div><p class="eyebrow">Novatorem theme only</p><h1>Spotify GitHub Profile</h1><p class="intro">Configure a Novatorem Spotify profile widget and copy the embed for your README.</p></div>
+      <span id="widget-status" class="widget-status" role="status">Enter your Spotify UID to preview</span>
     </header>
 
     <section class="settings" aria-label="Novatorem widget settings">
       <div class="identity-fields">
-        <label class="field">Spotify UID<input id="spotify-uid" type="text" autocomplete="off" spellcheck="false" value="31xau55gmj5ufec2bl4hbxh2zl24" /></label>
-        <label class="field">Profile link<input id="profile-link" type="url" value="https://www.last.fm/user/vendanski" /></label>
+        <label class="field">Spotify UID<input id="spotify-uid" type="text" autocomplete="off" spellcheck="false" placeholder="Enter your Spotify UID" value="" /></label>
+        <label class="field">Profile link<input id="profile-link" type="url" placeholder="https://example.com/your-profile" value="" /></label>
       </div>
       <div class="options-grid">
         <label><input id="cover-image" type="checkbox" checked /> Cover Image</label>
@@ -43,15 +43,15 @@
         <button id="markdown-tab" class="code-tab active" role="tab" aria-selected="true" type="button">Markdown Code</button>
         <button id="html-tab" class="code-tab" role="tab" aria-selected="false" type="button">HTML Code</button>
       </div>
-      <textarea id="code-output" readonly aria-label="Generated Novatorem embed code"></textarea>
+      <textarea id="code-output" readonly aria-label="Generated Novatorem embed code" placeholder="Enter your Spotify UID to generate embed code"></textarea>
       <button id="copy-code" class="copy-button" type="button">▢ &nbsp; COPY TO CLIPBOARD</button>
       <p id="copy-status" class="copy-status" aria-live="polite"></p>
     </section>
 
     <section class="preview-section" aria-labelledby="preview-heading">
       <h2 id="preview-heading">Preview</h2>
-      <div class="widget-frame"><img id="widget-preview" alt="Novatorem Spotify profile widget preview" /></div>
-      <p class="preview-note">This preview is loaded from the Novatorem widget service using your Spotify UID. It reflects that account’s listening activity.</p>
+      <div class="widget-frame"><img id="widget-preview" alt="Enter a Spotify UID to preview the Novatorem widget" /></div>
+      <p class="preview-note">Your UID and profile link are entered by you and saved only in this browser.</p>
     </section>
   </main>
   <script src="app.js"></script>
