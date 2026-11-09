@@ -4,22 +4,24 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <meta name="theme-color" content="#ffffff" />
-  <title>Spotify GitHub Profile Widget</title>
+  <meta name="description" content="Create a customizable Spotify-style music widget for your GitHub README." />
+  <title>Spotify GitHub README Widget</title>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="style.css" />
 </head>
 <body>
-  <header class="topbar">Spotify GitHub Profile Widget</header>
+  <header class="topbar">Spotify GitHub README Widget</header>
   <main class="page">
     <header class="account-row">
       <div>
-        <p class="eyebrow">Static preview mode</p>
-        <h1>Spotify GitHub Profile</h1>
+        <p class="eyebrow">README widget builder</p>
+        <h1>Customize your music card</h1>
+        <p class="intro">Style a song widget and copy the embed code into your GitHub README.</p>
       </div>
       <div class="account-actions">
-        <span id="connection-status" class="connection-status" role="status">Offline preview</span>
+        <span id="connection-status" class="connection-status" role="status">Preview mode</span>
         <button id="spotify-connect" class="spotify-button" type="button">Connect Spotify</button>
       </div>
     </header>
@@ -29,17 +31,14 @@
       <div id="widget-preview" class="widget-preview">
         <div id="cover-wrap" class="cover-wrap">
           <img id="preview-art" class="cover" alt="Current track cover" />
-          <canvas id="gradient-canvas" class="gradient-canvas" aria-hidden="true"></canvas>
         </div>
         <div class="track-info">
           <p id="preview-artist" class="artist">The Weeknd</p>
           <p id="preview-song" class="song">Blinding Lights</p>
-          <svg id="preview-wave" class="wave" viewBox="0 0 360 24" preserveAspectRatio="none" aria-hidden="true">
-            <path d="M0 12 C12 12 12 3 24 3 S36 21 48 21 60 7 72 7 84 17 96 17 108 3 120 3 132 21 144 21 156 8 168 8 180 16 192 16 204 4 216 4 228 20 240 20 252 7 264 7 276 17 288 17 300 3 312 3 324 21 336 21 348 12 360 12" />
-          </svg>
+          <svg id="preview-wave" class="wave" viewBox="0 0 360 24" preserveAspectRatio="none" aria-hidden="true"></svg>
         </div>
       </div>
-      <p id="status-message" class="status-message" aria-live="polite">Static GitHub Pages widget: no Spotify auth is active on this page.</p>
+      <p id="status-message" class="status-message" aria-live="polite">This is a preview. Connect Spotify is not available in this static demo.</p>
     </section>
 
     <section class="options" aria-label="Widget options">
@@ -49,28 +48,38 @@
         <label><input id="interchange" type="checkbox" /> Interchange artist and song</label>
         <label><input id="censor" type="checkbox" /> Censor profanity</label>
         <label><input id="hide-remaster" type="checkbox" /> Hide Remaster</label>
-        <label><input id="show-wave" type="checkbox" checked /> Show audio bar</label>
+        <label><input id="show-wave" type="checkbox" checked /> Show dotted wave</label>
       </div>
+
+      <section class="photo-controls" aria-labelledby="photo-title">
+        <div class="section-heading">
+          <div><h2 id="photo-title">Custom cover photo</h2><p>Upload an image to preview it, or use a public image URL for your README embed.</p></div>
+        </div>
+        <label class="field-label" for="photo-url">Public image URL</label>
+        <input id="photo-url" class="text-input" type="url" placeholder="https://example.com/my-cover.png" autocomplete="url" />
+        <div class="upload-row">
+          <label class="upload-button" for="photo-upload">Choose photo</label>
+          <input id="photo-upload" class="file-input" type="file" accept="image/*" />
+          <span id="photo-name" class="photo-name">No local photo selected</span>
+        </div>
+        <p class="field-hint">Transparent PNG and WebP images are supported. Uploads preview in your browser; to show one in a README, host it publicly and paste its URL above.</p>
+      </section>
+
       <div class="theme-row">
-        <label class="color-setting">Bar Color <input id="bar-color" type="color" value="#ffffff" /></label>
+        <label class="color-setting">Wave Color <input id="bar-color" type="color" value="#ffffff" /></label>
         <label class="color-setting">Background Color <input id="background-color" type="color" value="#07a196" /></label>
       </div>
-      <section class="gradient-controls" aria-labelledby="gradient-title">
-        <div class="gradient-title"><div><strong id="gradient-title">Gradient Map</strong><span>Remap cover shadows, midtones, and highlights by luminance</span></div><label><input id="gradient-enabled" type="checkbox" checked /> Enabled</label></div>
-        <div class="gradient-ramp" id="gradient-ramp"><label class="stop"><input id="shadow-color" type="color" value="#172b46" aria-label="Shadow color" /></label><label class="stop"><input id="mid-color" type="color" value="#8167a8" aria-label="Midtone color" /></label><label class="stop"><input id="highlight-color" type="color" value="#ffd6a0" aria-label="Highlight color" /></label></div>
-        <div class="stop-labels"><span>Shadows</span><span>Midtones</span><span>Highlights</span></div>
-        <label class="strength-setting">Gradient strength <input id="gradient-strength" type="range" min="0" max="100" value="100" /><output id="strength-output">100%</output></label>
-      </section>
     </section>
 
-    <section class="code-section">
-      <div class="tabs" role="tablist">
-        <button class="tab active" id="markdown-tab" type="button" role="tab" aria-selected="true">Markdown Code</button>
-        <button class="tab" id="html-tab" type="button" role="tab" aria-selected="false">HTML Code</button>
+    <section class="code-section" aria-labelledby="code-title">
+      <h2 id="code-title">README embed code</h2>
+      <div class="tabs" role="tablist" aria-label="Embed code format">
+        <button class="tab active" id="markdown-tab" type="button" role="tab" aria-selected="true">Markdown</button>
+        <button class="tab" id="html-tab" type="button" role="tab" aria-selected="false">HTML</button>
       </div>
-      <textarea id="code-output" readonly aria-label="Generated widget preview code" placeholder="This static preview does not generate a live Spotify URL."></textarea>
-      <button id="copy-code" class="copy-button" type="button">▢ &nbsp; Copy to clipboard</button>
-      <p class="embed-note">This version is intentionally static: GitHub Pages cannot complete Spotify login or store OAuth tokens.</p>
+      <textarea id="code-output" readonly aria-label="Generated README embed code" placeholder="Add a public image URL to generate embed code."></textarea>
+      <button id="copy-code" class="copy-button" type="button">▢ &nbsp; Copy embed code</button>
+      <p class="embed-note">GitHub README images must use a publicly accessible image URL. A local file or browser preview URL will not work in an embed.</p>
     </section>
   </main>
   <script src="app.js"></script>
