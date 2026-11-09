@@ -4,7 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <meta name="theme-color" content="#ffffff" />
-  <title>Spotify GitHub Profile Widget Generator</title>
+  <title>Spotify GitHub Profile Widget</title>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet" />
@@ -14,44 +14,45 @@
   <header class="topbar">Spotify GitHub Profile Widget</header>
   <main class="page">
     <header class="page-heading">
-      <div><p class="eyebrow">Novatorem theme only</p><h1>Spotify GitHub Profile</h1><p class="intro">Configure a Novatorem Spotify profile widget and copy the embed for your README.</p></div>
-      <span id="widget-status" class="widget-status" role="status">Enter your Spotify UID to preview</span>
+      <div><p class="eyebrow">Novatorem theme</p><h1>Spotify GitHub Profile</h1><p class="intro">Connect your Spotify to preview what you’re playing. Configure your Novatorem README widget below.</p></div>
+      <div class="account-actions"><span id="connection-status" class="connection-status" role="status">Not connected</span><button id="spotify-connect" class="spotify-button" type="button">Connect Spotify</button><button id="spotify-disconnect" class="disconnect-button hidden" type="button">Disconnect</button></div>
     </header>
 
-    <section class="settings" aria-label="Novatorem widget settings">
-      <div class="identity-fields">
-        <label class="field">Spotify UID<input id="spotify-uid" type="text" autocomplete="off" spellcheck="false" placeholder="Enter your Spotify UID" value="" /></label>
-        <label class="field">Profile link<input id="profile-link" type="url" placeholder="https://example.com/your-profile" value="" /></label>
+    <section class="preview-section" aria-labelledby="preview-heading">
+      <h2 id="preview-heading">Live preview</h2>
+      <div id="widget-preview" class="widget-preview">
+        <div id="cover-wrap" class="cover-wrap"><img id="preview-art" alt="Current track album cover" /><canvas id="gradient-canvas" class="gradient-canvas" aria-hidden="true"></canvas></div>
+        <div class="track-info"><p id="preview-artist" class="artist"></p><p id="preview-song" class="song">Connect Spotify to show your track</p><svg id="preview-wave" class="wave" viewBox="0 0 360 24" preserveAspectRatio="none" aria-hidden="true"><path d="M0 12 C12 12 12 3 24 3 S36 21 48 21 60 7 72 7 84 17 96 17 108 3 120 3 132 21 144 21 156 8 168 8 180 16 192 16 204 4 216 4 228 20 240 20 252 7 264 7 276 17 288 17 300 3 312 3 324 21 336 21 348 12 360 12" /></svg></div>
       </div>
+      <p id="status-message" class="status-message" aria-live="polite">Not connected. Connect Spotify to load your current or recently played track.</p>
+    </section>
+
+    <section class="settings" aria-label="Novatorem widget settings">
+      <h2>Widget settings</h2>
+      <label class="field">Spotify UID <span class="field-help">Used by the Kittinanx image service for the README embed. Enter it yourself; it is saved only in this browser.</span><input id="spotify-uid" type="text" autocomplete="off" spellcheck="false" placeholder="Your Spotify UID" value="" /></label>
+      <label class="field profile-field">Profile link (optional)<input id="profile-link" type="url" placeholder="https://example.com/your-profile" value="" /></label>
       <div class="options-grid">
-        <label><input id="cover-image" type="checkbox" checked /> Cover Image</label>
-        <label><input id="open-spotify" type="checkbox" /> Open in Spotify</label>
-        <label><input id="show-offline" type="checkbox" /> Show Offline</label>
-        <label><input id="interchange" type="checkbox" /> Interchange Artist with Song name</label>
-        <label><input id="profanity" type="checkbox" /> Censor Profanity</label>
-        <label><input id="hide-remaster" type="checkbox" /> Hide Remaster</label>
+        <label><input id="cover-image" type="checkbox" checked /> Cover Image</label><label><input id="open-spotify" type="checkbox" /> Open in Spotify</label><label><input id="show-offline" type="checkbox" /> Show Offline</label><label><input id="interchange" type="checkbox" /> Interchange Artist with Song name</label><label><input id="profanity" type="checkbox" /> Censor Profanity</label><label><input id="hide-remaster" type="checkbox" /> Hide Remaster</label>
       </div>
       <div class="color-settings">
         <label class="color-setting">Bar Color<input id="bar-color" type="color" value="#ffffff" /></label>
         <label class="color-setting">Background Color<input id="background-color" type="color" value="#07a196" /></label>
         <label class="checkbox-setting"><input id="bar-color-cover" type="checkbox" /> Automatic bar color from cover</label>
       </div>
+      <section class="gradient-editor" aria-labelledby="gradient-title">
+        <div class="gradient-heading"><div><p class="eyebrow">Live preview artwork</p><h3 id="gradient-title">Gradient Map</h3><p class="field-help">Maps dark, middle, and bright pixels in the album cover to your chosen colors.</p></div><label class="enable-gradient"><input id="gradient-enabled" type="checkbox" checked /> Enable</label></div>
+        <div id="gradient-ramp" class="gradient-ramp"><label class="gradient-stop stop-shadow"><input id="shadow-color" type="color" value="#172b46" aria-label="Shadow color" /></label><label class="gradient-stop stop-mid"><input id="mid-color" type="color" value="#8167a8" aria-label="Midtone color" /></label><label class="gradient-stop stop-highlight"><input id="highlight-color" type="color" value="#ffd6a0" aria-label="Highlight color" /></label></div>
+        <div class="gradient-labels"><span>Shadows</span><span>Midtones</span><span>Highlights</span></div>
+        <label class="strength-setting"><span>Map strength</span><input id="gradient-strength" type="range" min="0" max="100" value="100" /><output id="strength-output">100%</output></label>
+      </section>
     </section>
 
     <section class="code-section" aria-label="Generated embed code">
-      <div class="code-tabs" role="tablist" aria-label="Code format">
-        <button id="markdown-tab" class="code-tab active" role="tab" aria-selected="true" type="button">Markdown Code</button>
-        <button id="html-tab" class="code-tab" role="tab" aria-selected="false" type="button">HTML Code</button>
-      </div>
-      <textarea id="code-output" readonly aria-label="Generated Novatorem embed code" placeholder="Enter your Spotify UID to generate embed code"></textarea>
+      <div class="code-tabs" role="tablist" aria-label="Code format"><button id="markdown-tab" class="code-tab active" role="tab" aria-selected="true" type="button">Markdown Code</button><button id="html-tab" class="code-tab" role="tab" aria-selected="false" type="button">HTML Code</button></div>
+      <textarea id="code-output" readonly aria-label="Generated Novatorem embed code" placeholder="Enter your Spotify UID to generate the embed"></textarea>
       <button id="copy-code" class="copy-button" type="button">▢ &nbsp; COPY TO CLIPBOARD</button>
       <p id="copy-status" class="copy-status" aria-live="polite"></p>
-    </section>
-
-    <section class="preview-section" aria-labelledby="preview-heading">
-      <h2 id="preview-heading">Preview</h2>
-      <div class="widget-frame"><img id="widget-preview" alt="Enter a Spotify UID to preview the Novatorem widget" /></div>
-      <p class="preview-note">Your UID and profile link are entered by you and saved only in this browser.</p>
+      <p class="embed-note">The README code uses the Kittinanx Novatorem image service. The gradient map is a live-preview customization; Kittinanx’s embed service does not provide gradient-map parameters.</p>
     </section>
   </main>
   <script src="app.js"></script>

@@ -1,9 +1,10 @@
-# Spotify GitHub Profile Widget Generator
+# Spotify GitHub Profile Widget
 
-A Novatorem-only generator for the Kittinanx Spotify GitHub Profile image service.
+A Novatorem-only generator with a live Spotify-connected preview.
 
-- Enter a Spotify UID and optional profile link in the browser to preview the widget.
-- Generates Markdown and HTML using the Novatorem theme and available widget settings.
-- Does not include a Spotify UID or profile link in the public source code; entered settings are saved in the browser's local storage.
+- Spotify UID and optional profile URL are blank by default and stored only in this browser after entry.
+- Connect Spotify with Authorization Code + PKCE to show the current track; optionally show the most recently played track when idle.
+- Gradient map preview remaps actual album-cover luminance to shadow, midtone and highlight colors.
+- README Markdown/HTML uses the real Kittinanx Novatorem image endpoint.
 
-The generator uses the Kittinanx image service at `https://spotify-github-profile.kittinanx.com/api/view`. The service resolves listening activity for the supplied Spotify UID.
+The gradient-map preview is local to the page; the Kittinanx image endpoint supports its documented widget options, not custom gradient-map colors.
