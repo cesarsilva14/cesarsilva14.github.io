@@ -48,6 +48,11 @@ async function handleCallback() {
   const expectedState = sessionStorage.getItem(STATE_KEY);
   const codeVerifier = sessionStorage.getItem(VERIFIER_KEY);
 
+  if (params.has("error")) {
+    showError("Spotify sign-in was cancelled or denied. Please try again.");
+    return;
+  }
+
   if (!code || !returnedState || !expectedState || returnedState !== expectedState || !codeVerifier) {
     showError("Spotify sign-in failed. Please try again.");
     return;
@@ -237,8 +242,7 @@ function showNoTrackState() {
     <button id="connect-button" class="primary-button">Connect Spotify</button>
   `;
 
-  const reconnectButton = document.getElementById("connect-button");
-  reconnectButton.addEventListener("click", beginSpotifyAuth);
+  document.getElementById("connect-button").addEventListener("click", beginSpotifyAuth);
 }
 
 function showLoggedOutState() {
@@ -253,8 +257,7 @@ function showLoggedOutState() {
     <button id="connect-button" class="primary-button">Connect Spotify</button>
   `;
 
-  const reconnectButton = document.getElementById("connect-button");
-  reconnectButton.addEventListener("click", beginSpotifyAuth);
+  document.getElementById("connect-button").addEventListener("click", beginSpotifyAuth);
 }
 
 function showError(message) {
@@ -313,7 +316,13 @@ function base64UrlEncode(value) {
   return btoa(binary).replace(/\+/g, "-").replace(/\//g, "_").replace(/=+$/g, "");
 }
 
-if (window.location.pathname.endsWith("/callback") || window.location.pathname.endsWith("/callback.html")) {
+const callbackParams = new URLSearchParams(window.location.search);
+if (
+  window.location.pathname.endsWith("/callback") ||
+  window.location.pathname.endsWith("/callback.html") ||
+  callbackParams.has("code") ||
+  callbackParams.has("error")
+) {
   handleCallback();
 } else {
   renderApp();
