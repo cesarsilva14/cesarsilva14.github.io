@@ -1,11 +1,12 @@
 # Spotify GitHub Profile Widget
 
-A focused, Novatorem-style Spotify widget studio for `khomedy.github.io`.
+A Novatorem-only Spotify profile widget customizer for GitHub Pages.
 
-- Connects to Spotify with OAuth Authorization Code + PKCE and polls the currently-playing endpoint while the studio is open.
-- Offers Novatorem-only settings, album artwork gradient-map colors, Markdown/HTML snippets, and an inline preview.
-- Runs as a static GitHub Pages site.
-
-The preview HTML is shareable, but GitHub README image embeds need an image-serving backend. A browser-only GitHub Pages site cannot securely keep Spotify credentials or generate a live image response for GitHub's image proxy.
+- Sign in with Spotify using Authorization Code + PKCE.
+- While the studio is open, it checks the currently playing track and falls back to the most recently played track when playback is idle.
+- Customize the Novatorem-style bar, cover, and a real luminance-based gradient map with shadow, midtone, highlight, and strength controls.
+- Copy Markdown or HTML for a shareable preview.
 
 Spotify redirect URI: `https://khomedy.github.io/callback.html`.
+
+GitHub Pages is static hosting. The generator can show and poll Spotify data in the signed-in browser, but an automatically updating image in a GitHub README needs a separate image-serving backend; README image requests do not carry the browser's Spotify login.
