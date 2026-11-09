@@ -1,25 +1,11 @@
-# khomedy.github.io
+# Spotify GitHub Profile Widget
 
-This is a static GitHub Pages project for a README widget studio.
+A focused, Novatorem-style Spotify widget studio for `khomedy.github.io`.
 
-## What it does
+- Connects to Spotify with OAuth Authorization Code + PKCE and polls the currently-playing endpoint while the studio is open.
+- Offers Novatorem-only settings, album artwork gradient-map colors, Markdown/HTML snippets, and an inline preview.
+- Runs as a static GitHub Pages site.
 
-- Lets you customize a Now Playing card without needing a backend.
-- Lets you preview it locally in the browser.
-- Generates a preview link and a markdown snippet for your README.
-- Spotify connection is optional and only used if you want to try to load live track data.
+The preview HTML is shareable, but GitHub README image embeds need an image-serving backend. A browser-only GitHub Pages site cannot securely keep Spotify credentials or generate a live image response for GitHub's image proxy.
 
-## Important limitation
-
-GitHub Pages cannot securely run the Spotify OAuth + dynamic image generation flow that a fully live README widget requires. This project gives you the designer/editor and a shareable preview URL. For a fully auto-refreshing README image, you still need a small backend service (Vercel, Cloudflare Pages function, or Netlify function).
-
-## Usage
-
-1. Open the site at `https://khomedy.github.io/`
-2. Edit the widget text, colors, and album art
-3. Copy the preview URL or markdown snippet
-4. Paste it into your README or share the URL
-
-## Redirect
-
-This repo still includes a `callback.html` file for compatibility with Spotify OAuth, but the main studio works without it.
+Spotify redirect URI: `https://khomedy.github.io/callback.html`.
