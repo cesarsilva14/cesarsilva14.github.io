@@ -4,56 +4,57 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <meta name="theme-color" content="#ffffff" />
-  <title>Spotify Now Playing Widget Studio</title>
+  <title>Spotify GitHub Profile Widget</title>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="style.css" />
 </head>
 <body>
-  <header class="topbar">Spotify Now Playing Widget Studio</header>
+  <header class="topbar">Spotify GitHub Profile Widget</header>
   <main class="page">
-    <header class="page-heading">
-      <div><p class="eyebrow">Your Spotify widget</p><h1>Now Playing</h1><p class="intro">Connect your Spotify account to preview the track you’re playing. Customize the Novatorem-inspired widget and copy a share link.</p></div>
-      <div class="account-actions"><span id="connection-status" class="connection-status" role="status">Not connected</span><button id="spotify-connect" class="spotify-button" type="button">Connect Spotify</button><button id="spotify-disconnect" class="disconnect-button hidden" type="button">Disconnect</button></div>
+    <header class="account-row">
+      <div><p class="eyebrow">Novatorem-inspired Spotify widget</p><h1>Spotify GitHub Profile</h1></div>
+      <div class="account-actions"><span id="connection-status" class="connection-status" role="status">Not connected</span><button id="spotify-connect" class="spotify-button" type="button">Connect Spotify</button><button id="spotify-disconnect" class="text-button hidden" type="button">Disconnect</button></div>
     </header>
 
-    <div class="studio-grid">
-      <section class="preview-section" aria-labelledby="preview-heading">
-        <div class="section-heading"><h2 id="preview-heading">Live preview</h2><span id="track-source" class="track-source">Waiting for Spotify</span></div>
-        <div id="widget-preview" class="widget-preview">
-          <div id="cover-wrap" class="cover-wrap"><img id="preview-art" alt="Current track album cover" /><canvas id="gradient-canvas" class="gradient-canvas" aria-hidden="true"></canvas></div>
-          <div class="track-info"><p id="preview-artist" class="artist"></p><p id="preview-song" class="song">Connect Spotify to show your track</p><svg id="preview-wave" class="wave" viewBox="0 0 360 24" preserveAspectRatio="none" aria-hidden="true"><path d="M0 12 C12 12 12 3 24 3 S36 21 48 21 60 7 72 7 84 17 96 17 108 3 120 3 132 21 144 21 156 8 168 8 180 16 192 16 204 4 216 4 228 20 240 20 252 7 264 7 276 17 288 17 300 3 312 3 324 21 336 21 348 12 360 12" /></svg></div>
-        </div>
-        <p id="status-message" class="status-message" aria-live="polite">Connect Spotify to load your current track. If nothing is playing, the most recently played track can be shown.</p>
-        <div class="share-row"><button id="copy-link" class="copy-button" type="button">Copy preview link</button><button id="copy-markdown" class="secondary-button" type="button">Copy README link</button></div>
-        <p id="copy-status" class="copy-status" aria-live="polite"></p>
-        <p class="embed-note">This is your GitHub Pages widget and preview. GitHub Pages cannot serve a changing image to a README; an auto-updating README image requires a server endpoint.</p>
-      </section>
+    <section class="preview-section" aria-labelledby="preview-title">
+      <h2 id="preview-title">Preview</h2>
+      <div id="widget-preview" class="widget-preview">
+        <div id="cover-wrap" class="cover-wrap"><img id="preview-art" class="cover" alt="Current track cover" /><canvas id="gradient-canvas" class="gradient-canvas" aria-hidden="true"></canvas></div>
+        <div class="track-info"><p id="preview-artist" class="artist"></p><p id="preview-song" class="song">Connect Spotify to load your track</p><svg id="preview-wave" class="wave" viewBox="0 0 360 24" preserveAspectRatio="none" aria-hidden="true"><path d="M0 12 C12 12 12 3 24 3 S36 21 48 21 60 7 72 7 84 17 96 17 108 3 120 3 132 21 144 21 156 8 168 8 180 16 192 16 204 4 216 4 228 20 240 20 252 7 264 7 276 17 288 17 300 3 312 3 324 21 336 21 348 12 360 12" /></svg></div>
+      </div>
+      <p id="status-message" class="status-message" aria-live="polite">Connect Spotify to show your current or recently played track.</p>
+    </section>
 
-      <section class="settings" aria-labelledby="settings-heading">
-        <div class="section-heading"><h2 id="settings-heading">Widget settings</h2><span class="saved-note">Saved in this browser</span></div>
-        <div class="options-grid">
-          <label><input id="cover-enabled" type="checkbox" checked /> Cover image</label>
-          <label><input id="show-offline" type="checkbox" checked /> Show recently played when idle</label>
-          <label><input id="interchange" type="checkbox" /> Interchange artist and song</label>
-          <label><input id="censor" type="checkbox" /> Censor profanity</label>
-          <label><input id="hide-remaster" type="checkbox" /> Hide Remaster</label>
-          <label><input id="show-wave" type="checkbox" checked /> Show wavy line</label>
-        </div>
-        <div class="color-settings">
-          <label class="color-setting">Wave color<input id="wave-color" type="color" value="#ffffff" /></label>
-          <label class="color-setting">Text color<input id="text-color" type="color" value="#30343b" /></label>
-        </div>
-
-        <section class="gradient-editor" aria-labelledby="gradient-title">
-          <div class="gradient-heading"><div><p class="eyebrow">Album artwork</p><h3 id="gradient-title">Gradient Map</h3><p class="help-text">Recolors pixels by brightness, like a painting-app gradient map.</p></div><label class="enable-gradient"><input id="gradient-enabled" type="checkbox" checked /> Enable</label></div>
-          <div id="gradient-ramp" class="gradient-ramp"><label class="gradient-stop stop-shadow"><input id="shadow-color" type="color" value="#172b46" aria-label="Shadow color" /></label><label class="gradient-stop stop-mid"><input id="mid-color" type="color" value="#8167a8" aria-label="Midtone color" /></label><label class="gradient-stop stop-highlight"><input id="highlight-color" type="color" value="#ffd6a0" aria-label="Highlight color" /></label></div>
-          <div class="gradient-labels"><span>Shadows</span><span>Midtones</span><span>Highlights</span></div>
-          <label class="strength-setting"><span>Map strength</span><input id="gradient-strength" type="range" min="0" max="100" value="100" /><output id="strength-output">100%</output></label>
-        </section>
+    <section class="options" aria-label="Widget options">
+      <div class="checkbox-options">
+        <label><input id="cover-enabled" type="checkbox" checked /> Cover image</label>
+        <label><input id="show-offline" type="checkbox" checked /> Show recently played when idle</label>
+        <label><input id="interchange" type="checkbox" /> Interchange artist and song</label>
+        <label><input id="censor" type="checkbox" /> Censor profanity</label>
+        <label><input id="hide-remaster" type="checkbox" /> Hide Remaster</label>
+        <label><input id="show-wave" type="checkbox" checked /> Show audio bar</label>
+      </div>
+      <div class="theme-row">
+        <label class="color-setting">Bar Color <input id="bar-color" type="color" value="#ffffff" /></label>
+        <label class="color-setting">Background Color <input id="background-color" type="color" value="#07a196" /></label>
+        <label class="automatic-setting"><input id="automatic-color" type="checkbox" /> Automatic bar color</label>
+      </div>
+      <section class="gradient-controls" aria-labelledby="gradient-title">
+        <div class="gradient-title"><div><strong id="gradient-title">Gradient Map</strong><span>Remap cover shadows, midtones, and highlights by luminance</span></div><label><input id="gradient-enabled" type="checkbox" checked /> Enable</label></div>
+        <div class="gradient-ramp" id="gradient-ramp"><label class="stop"><input id="shadow-color" type="color" value="#172b46" aria-label="Shadow color" /></label><label class="stop"><input id="mid-color" type="color" value="#8167a8" aria-label="Midtone color" /></label><label class="stop"><input id="highlight-color" type="color" value="#ffd6a0" aria-label="Highlight color" /></label></div>
+        <div class="stop-labels"><span>Shadows</span><span>Midtones</span><span>Highlights</span></div>
+        <label class="strength-setting">Gradient strength <input id="gradient-strength" type="range" min="0" max="100" value="100" /><output id="strength-output">100%</output></label>
       </section>
-    </div>
+    </section>
+
+    <section class="code-section">
+      <div class="tabs" role="tablist"><button class="tab active" id="markdown-tab" type="button" role="tab" aria-selected="true">Markdown Code</button><button class="tab" id="html-tab" type="button" role="tab" aria-selected="false">HTML Code</button></div>
+      <textarea id="code-output" readonly aria-label="Generated widget preview code" placeholder="Connect Spotify to generate your personalized preview link"></textarea>
+      <button id="copy-code" class="copy-button" type="button">▢ &nbsp; Copy to clipboard</button>
+      <p class="embed-note">The preview link shows the track loaded in this browser. GitHub Pages is static hosting, so a permanently live README image requires a backend.</p>
+    </section>
   </main>
   <script src="app.js"></script>
 </body>
